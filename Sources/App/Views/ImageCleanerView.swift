@@ -1,0 +1,317 @@
+import SwiftUI
+import PhotosUI
+import Domain
+import Data
+
+struct ImageCleanerView: View {
+    @EnvironmentObject private var appState: AppState
+    @StateObject private var viewModel = ImageCleanerViewModel()
+    @State private var showingPhotoPicker = false
+    @State private var showingFilePicker = false
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            if viewModel.selectedImages.isEmpty {
+                // Empty State
+                VStack(spacing: 24) {
+                    Image(systemName: "photo.on.rectangle.angled")
+                        .font(.system(size: 80))
+                        .foregroundColor(.gray)
+                    
+                    Text("Select Photos to Clean")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    Text("Choose photos from your library or files to remove all metadata")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                    
+                    VStack(spacing: 12) {
+                        Button(action: { showingPhotoPicker = true }) {
+                            Label("Select from Photos", systemImage: "photo.stack")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        
+                        Button(action: { showingFilePicker = true }) {
+                            Label("Select from Files", systemImage: "folder")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding(.horizontal, 40)
+                }
+                .frame(maxHeight: .infinity)
+            } else {
+                // Selected Images List
+                List {
+                    Section(header: Text("Selected Photos (\(viewModel.selectedImages.count))")) {
+                        ForEach(viewModel.selectedImages) { item in
+                            ImageItemRow(item: item)
+                        }
+                        .onDelete { indexSet in
+                            viewModel.removeImages(at: indexSet)
+                        }
+                    }
+                    
+                    if !viewModel.results.isEmpty {
+                        Section(header: Text("Results")) {
+                            ForEach(viewModel.results) { result in
+                                ResultRow(result: result)
+                            }
+                        }
+                    }
+                }
+                
+                // Action Button
+                if !viewModel.isProcessing {
+                    Button(action: {
+                        Task {
+                            await viewModel.processImages(settings: appState.settings)
+                        }
+                    }) {
+                        Text("Clean \(viewModel.selectedImages.count) Photo\(viewModel.selectedImages.count > 1 ? "s" : "")")
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
+                    .padding()
+                } else {
+                    VStack(spacing: 12) {
+                        ProgressView(value: viewModel.progress)
+                            .progressViewStyle(.linear)
+                        
+                        Text("Processing \(viewModel.currentIndex)/\(viewModel.selectedImages.count)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Button("Cancel") {
+                            viewModel.cancel()
+                        }
+                        .foregroundColor(.red)
+                    }
+                    .padding()
+                }
+            }
+        }
+        .navigationTitle("Clean Photos")
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingPhotoPicker) {
+            PhotoPickerView(selectedImages: $viewModel.selectedImages)
+        }
+        .sheet(isPresented: $showingFilePicker) {
+            DocumentPickerView(selectedFiles: $viewModel.selectedImages)
+        }
+        .alert("Error", isPresented: $viewModel.showingError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(viewModel.errorMessage)
+        }
+    }
+}
+
+// MARK: - Image Item Row
+
+struct ImageItemRow: View {
+    let item: MediaItem
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "photo")
+                .font(.title2)
+                .foregroundColor(.blue)
+                .frame(width: 44, height: 44)
+                .background(Color.blue.opacity(0.1))
+                .cornerRadius(8)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(item.name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+                
+                Text(item.formattedSize)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Result Row
+
+struct ResultRow: View {
+    let result: CleaningResult
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(result.mediaItem.name)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                
+                Spacer()
+                
+                if result.success {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                } else {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                }
+            }
+            
+            if result.success {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("\(result.removedMetadata.count) metadata types removed")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    if result.detectedMetadata.contains(where: { $0.type == .gps && $0.detected }) {
+                        HStack {
+                            Image(systemName: "location.fill")
+                                .font(.caption2)
+                            Text("GPS data removed")
+                                .font(.caption2)
+                        }
+                        .foregroundColor(.orange)
+                    }
+                    
+                    if let spaceSaved = result.spaceSaved, spaceSaved > 0 {
+                        Text("Saved \(ByteCountFormatter.string(fromByteCount: spaceSaved, countStyle: .file))")
+                            .font(.caption2)
+                            .foregroundColor(.green)
+                    }
+                    
+                    Text("Processing time: \(String(format: "%.2f", result.processingTime))s")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            } else if let error = result.error {
+                Text(error)
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+// MARK: - View Model
+
+@MainActor
+final class ImageCleanerViewModel: ObservableObject {
+    @Published var selectedImages: [MediaItem] = []
+    @Published var results: [CleaningResult] = []
+    @Published var isProcessing = false
+    @Published var progress: Double = 0
+    @Published var currentIndex = 0
+    @Published var showingError = false
+    @Published var errorMessage = ""
+    
+    private var task: Task<Void, Never>?
+    
+    func processImages(settings: CleaningSettings) async {
+        isProcessing = true
+        progress = 0
+        currentIndex = 0
+        results = []
+        
+        let cleaner = ImageMetadataCleaner()
+        let storage = LocalStorageRepository()
+        let useCase = CleanImageUseCaseImpl(cleaner: cleaner, storage: storage)
+        
+        for (index, item) in selectedImages.enumerated() {
+            currentIndex = index + 1
+            
+            do {
+                let result = try await useCase.execute(
+                    imageURL: item.sourceURL,
+                    settings: settings
+                )
+                results.append(result)
+            } catch {
+                results.append(CleaningResult(
+                    mediaItem: item,
+                    state: .failed,
+                    error: error.localizedDescription
+                ))
+            }
+            
+            progress = Double(currentIndex) / Double(selectedImages.count)
+        }
+        
+        isProcessing = false
+    }
+    
+    func removeImages(at offsets: IndexSet) {
+        selectedImages.remove(atOffsets: offsets)
+    }
+    
+    func cancel() {
+        task?.cancel()
+        isProcessing = false
+    }
+}
+
+// MARK: - Photo Picker (Placeholder)
+
+struct PhotoPickerView: View {
+    @Binding var selectedImages: [MediaItem]
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationView {
+            Text("Photo Picker - PhotoKit Integration Required")
+                .navigationTitle("Select Photos")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+        }
+    }
+}
+
+// MARK: - Document Picker (Placeholder)
+
+struct DocumentPickerView: View {
+    @Binding var selectedFiles: [MediaItem]
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationView {
+            Text("Document Picker - UIDocumentPickerViewController Required")
+                .navigationTitle("Select Files")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }
+                    }
+                }
+        }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        ImageCleanerView()
+            .environmentObject(AppState())
+    }
+}
