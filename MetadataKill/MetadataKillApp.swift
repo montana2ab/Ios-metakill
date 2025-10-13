@@ -1,8 +1,11 @@
+// MetadataKill App Wrapper
+// This is a minimal wrapper that uses the App module from the Swift Package
+
 import SwiftUI
-import App
+import Domain
 
 @main
-struct MetadataKillApp: App {
+struct MetadataKillWrapperApp: App {
     @StateObject private var appState = AppState()
     
     var body: some Scene {
