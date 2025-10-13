@@ -128,7 +128,7 @@ SwiftUI interface:
 - **Swift**: 5.9+
 - **Platforms**: Apple Silicon & Intel simulators supported
 
-### Quick Start (5 Steps)
+### Quick Start (3 Steps)
 
 1. **Clone the repository**:
    ```bash
@@ -136,28 +136,36 @@ SwiftUI interface:
    cd Ios-metakill
    ```
 
-2. **Open in Xcode**:
+2. **Open the Xcode project**:
    ```bash
-   open Package.swift
+   open MetadataKill.xcodeproj
    ```
+   > **Note**: The project is pre-configured and ready to use!
 
-3. **Create iOS App Wrapper**:
-   - File > New > Project > iOS App
-   - Name it "MetadataKill"
-   - Add local package from cloned folder
-   - Link the "App" library
-
-4. **Configure Info.plist**:
-   - Add `NSPhotoLibraryUsageDescription`
-   - Add `NSPhotoLibraryAddUsageDescription`
-
-5. **Build and Run**:
+3. **Build and Run**:
    - Select simulator or device
    - Press ⌘R or click Run
+
+> **🎉 New!** The repository now includes a pre-configured Xcode project (`MetadataKill.xcodeproj`) that's ready to build and run. No manual setup required!
 
 For detailed step-by-step instructions with screenshots, see:
 - **[QUICKSTART.md](QUICKSTART.md)** (English)
 - **[INSTALLATION_FR.md](INSTALLATION_FR.md)** (Français)
+
+### Xcode Project
+
+The repository includes a ready-to-use Xcode project (`MetadataKill.xcodeproj`):
+
+```bash
+open MetadataKill.xcodeproj    # Open in Xcode
+```
+
+**Features**:
+- ✅ Pre-configured with local Swift Package
+- ✅ All frameworks and dependencies linked
+- ✅ Info.plist ready with privacy descriptions
+- ✅ Build schemes configured
+- ✅ iOS 15.0+ deployment target
 
 ### Swift Package Manager
 

@@ -4,13 +4,12 @@
 
 ## ⚠️ Important à Savoir
 
-MetadataKill est un **projet de code source** (Swift Package), pas une application prête à l'emploi. Vous devez :
+MetadataKill est un **projet Xcode** incluant du code source (Swift Package). Vous devez :
 1. Avoir un Mac avec Xcode installé
-2. Créer une "enveloppe" d'application iOS
-3. Lier le code source à cette enveloppe
-4. Compiler et exécuter
+2. Ouvrir le projet Xcode (déjà pré-configuré !)
+3. Compiler et exécuter
 
-**Pas de fichier .ipa ou .app disponible** pour installation directe.
+**🎉 Nouveau !** Le projet inclut maintenant un fichier Xcode pré-configuré (`MetadataKill.xcodeproj`) - plus besoin de configuration manuelle !
 
 ## ✅ Ce dont Vous Avez Besoin
 
@@ -19,7 +18,7 @@ MetadataKill est un **projet de code source** (Swift Package), pas une applicati
 - [ ] Un compte développeur Apple (gratuit pour tester)
 - [ ] 10-15 minutes
 
-## 📋 Guide en 5 Étapes Simples
+## 📋 Guide en 3 Étapes Simples
 
 ### Étape 1 : Télécharger le Code
 
@@ -34,103 +33,31 @@ Si vous n'avez pas `git`, installez-le via les Command Line Tools :
 xcode-select --install
 ```
 
-### Étape 2 : Ouvrir Xcode
+### Étape 2 : Ouvrir le Projet Xcode
 
 ```bash
 # Dans Terminal
-open Package.swift
+open MetadataKill.xcodeproj
 ```
 
-Xcode va s'ouvrir avec le projet.
+Xcode va s'ouvrir avec le projet pré-configuré.
 
-### Étape 3 : Créer l'Application iOS
+### Étape 3 : Compiler et Exécuter
 
-C'est l'étape la plus importante !
+1. **Sélectionnez un Simulateur** : En haut à gauche, cliquez sur "iPhone 15" (ou autre simulateur disponible)
 
-1. **Dans Xcode**, allez dans le menu : `Fichier > Nouveau > Projet...`
-
-2. **Sélectionnez** : `iOS` puis `App`
-
-3. **Configurez** :
-   - **Nom du produit** : `MetadataKill`
-   - **Équipe** : Sélectionnez votre compte Apple
-   - **Identifiant d'organisation** : `com.monnom` (remplacez par votre nom)
-   - **Interface** : `SwiftUI`
-   - **Langage** : `Swift`
+2. **Configurez votre Équipe** (première fois seulement) :
+   - Sélectionnez le projet "MetadataKill" dans la barre latérale
+   - Cliquez sur l'onglet "Signing & Capabilities"
+   - Sélectionnez votre **Équipe** (compte Apple)
 
 4. **Enregistrez** le projet dans un dossier **différent** (pas dans `Ios-metakill`)
 
-### Étape 4 : Lier le Code Source
-
-1. Dans le **navigateur de projet** (barre latérale gauche), cliquez sur votre projet
-
-2. Sélectionnez votre **cible** (target) "MetadataKill"
-
-3. Allez dans l'onglet **Général**
-
-4. Descendez jusqu'à **"Frameworks, Libraries, and Embedded Content"**
-
-5. Cliquez sur le bouton **+**
-
-6. Cliquez sur **"Add Other..."** puis **"Add Package Dependency..."**
-
-7. Cliquez sur **"Add Local..."**
-
-8. Naviguez vers le dossier `Ios-metakill` que vous avez cloné
-
-9. Sélectionnez-le et cliquez sur **"Add Package"**
-
-10. Dans la liste qui apparaît, cochez **"App"**
-
-11. Cliquez sur **"Add"**
-
-### Étape 5 : Modifier le Fichier Principal
-
-1. Dans le navigateur de projet, trouvez le fichier Swift principal (celui avec `@main`)
-
-2. **Remplacez tout son contenu** par :
-
-```swift
-import SwiftUI
-import App
-
-@main
-struct MetadataKillApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environmentObject(AppState())
-        }
-    }
-}
-```
-
-3. **Enregistrez** (⌘S)
-
-### Étape 6 : Ajouter les Permissions
-
-1. Dans le navigateur, trouvez le fichier `Info.plist`
-
-2. **Clic droit** dessus > **Ouvrir comme** > **Code Source**
-
-3. Ajoutez ces lignes **avant** la balise `</dict>` :
-
-```xml
-<key>NSPhotoLibraryUsageDescription</key>
-<string>MetadataKill a besoin d'accéder à vos photos pour supprimer les métadonnées.</string>
-<key>NSPhotoLibraryAddUsageDescription</key>
-<string>MetadataKill enregistre les photos nettoyées dans votre bibliothèque.</string>
-```
-
-### Étape 7 : Lancer l'Application !
-
-1. En haut de Xcode, sélectionnez un **simulateur** (ex: iPhone 15 Pro)
-
-2. Appuyez sur le **bouton Play** (▶️) ou **⌘R**
-
-3. L'application va compiler (peut prendre 1-2 minutes la première fois)
-
-4. L'application s'ouvre dans le simulateur !
+3. **Lancez l'Application** :
+   - Cliquez sur le bouton ▶️ (Play) en haut à gauche
+   - Ou appuyez sur ⌘R
+   - L'application va compiler (peut prendre 1-2 minutes la première fois)
+   - L'application s'ouvre dans le simulateur !
 
 ## 🎉 Félicitations !
 
