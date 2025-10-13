@@ -216,15 +216,21 @@ public final class VideoMetadataCleaner {
         
         // Video input settings
         let naturalSize = try await videoTrack.load(.naturalSize)
+        var compressionProperties: [String: Any] = [
+            AVVideoAverageBitRateKey: 8_000_000, // 8 Mbps
+            AVVideoExpectedSourceFrameRateKey: 30
+        ]
+        
+        // Only set profile level for H.264, not for HEVC
+        if codec == .h264 {
+            compressionProperties[AVVideoProfileLevelKey] = AVVideoProfileLevelH264MainAutoLevel
+        }
+        
         let videoInputSettings: [String: Any] = [
             AVVideoCodecKey: codec,
             AVVideoWidthKey: naturalSize.width,
             AVVideoHeightKey: naturalSize.height,
-            AVVideoCompressionPropertiesKey: [
-                AVVideoAverageBitRateKey: 8_000_000, // 8 Mbps
-                AVVideoProfileLevelKey: settings.preserveHDR ? AVVideoProfileLevelH264HighAutoLevel : AVVideoProfileLevelH264MainAutoLevel,
-                AVVideoExpectedSourceFrameRateKey: 30
-            ]
+            AVVideoCompressionPropertiesKey: compressionProperties
         ]
         
         let videoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoInputSettings)

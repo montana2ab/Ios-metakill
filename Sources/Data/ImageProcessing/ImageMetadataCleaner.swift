@@ -102,7 +102,7 @@ public final class ImageMetadataCleaner {
         }
         
         // Check for XMP
-        if let xmp = properties[kCGImagePropertyIPTCDictionary as String] as? [String: Any], !xmp.isEmpty {
+        if let xmp = properties[kCGImagePropertyXMPDictionary as String] as? [String: Any], !xmp.isEmpty {
             detectedMetadata.append(MetadataInfo(
                 type: .xmp,
                 detected: true,

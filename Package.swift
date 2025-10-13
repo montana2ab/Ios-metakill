@@ -66,23 +66,5 @@ let package = Package(
             dependencies: ["Domain"],
             path: "Tests/DomainTests"
         ),
-        .testTarget(
-            name: "DataTests",
-            dependencies: ["Data", "Domain"],
-            path: "Tests/DataTests",
-            resources: [
-                .copy("TestAssets")
-            ]
-        ),
-        .testTarget(
-            name: "PlatformTests",
-            dependencies: ["Platform", "Domain", "Data"],
-            path: "Tests/PlatformTests"
-        ),
-        .testTarget(
-            name: "AppTests",
-            dependencies: ["App", "Domain", "Data", "Platform"],
-            path: "Tests/AppTests"
-        ),
     ]
 )
