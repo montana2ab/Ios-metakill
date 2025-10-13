@@ -75,11 +75,12 @@ This document tracks pending tasks for MetadataKill development.
   - Export results summary (CSV/JSON)
 
 ### Localization
-- [ ] **French Translation**
-  - Create String Catalog
-  - Translate all UI strings
-  - Translate error messages
-  - Test RTL support (for future languages)
+- [x] **French Translation** ✅
+  - Created Localizable.strings for EN/FR
+  - Translated all UI strings
+  - Updated all views to use localization
+  - Added localization helper extension
+  - Created comprehensive French installation guide
   
 - [ ] **Additional Languages** (Future)
   - Spanish

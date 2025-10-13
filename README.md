@@ -6,10 +6,15 @@
 ![Swift](https://img.shields.io/badge/Swift-5.9%2B-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Privacy](https://img.shields.io/badge/Privacy-No%20Data%20Collected-brightgreen)
+![Languages](https://img.shields.io/badge/Languages-English%20%7C%20Français-blueviolet)
 
 **Complete metadata removal from photos and videos - 100% on-device processing**
 
-[Features](#features) • [Architecture](#architecture) • [Installation](#installation) • [Usage](#usage) • [Privacy](#privacy) • [Testing](#testing)
+**Suppression complète des métadonnées des photos et vidéos - Traitement 100% sur l'appareil**
+
+[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Languages](#languages) • [Privacy](#privacy) • [Testing](#testing)
+
+[Fonctionnalités](#features) • [Installation](#installation) • [Utilisation](#usage) • [Langues](#languages) • [Confidentialité](#privacy) • [Tests](#testing)
 
 </div>
 
@@ -113,7 +118,9 @@ SwiftUI interface:
 
 ## 🚀 Installation
 
-> **📘 Guide Détaillé** : [English Installation Guide](QUICKSTART.md) • [Guide d'Installation Français](INSTALLATION_FR.md)
+> **🎯 Nouveau ? Commencez ici !** : [START HERE (English)](QUICKSTART.md) • [COMMENCER ICI (Français)](COMMENCER_ICI.md)
+>
+> **📘 Guides Détaillés** : [English Installation Guide](QUICKSTART.md) • [Guide d'Installation Français](INSTALLATION_FR.md)
 
 ### Requirements
 - **Xcode**: 14.0+ (for iOS 15 support) or 15.0+ (recommended)
@@ -162,6 +169,40 @@ swift test     # Run unit tests
 ```
 
 **Note**: Some modules require iOS frameworks (CoreGraphics, AVFoundation) and will only compile on macOS with Xcode.
+
+---
+
+## 🌍 Languages
+
+MetadataKill is fully localized in:
+- 🇬🇧 **English**
+- 🇫🇷 **Français** (French)
+
+### How to Change Language / Comment Changer la Langue
+
+The app automatically detects your device language. To use the app in French:
+
+#### On iOS Simulator
+1. Open **Settings** app in simulator
+2. Go to **General > Language & Region**
+3. Change language to **Français**
+4. Restart MetadataKill app
+
+#### On Physical Device / Sur Appareil Physique
+1. Open **Settings** on your iPhone/iPad
+2. Go to **General > Language & Region**
+3. Change preferred language to **Français**
+4. Restart MetadataKill app
+
+#### Force French in Xcode (For Testing)
+1. Select your app scheme in Xcode
+2. Click **Edit Scheme** (next to run button)
+3. Select **Run** in sidebar
+4. Go to **Options** tab
+5. Under **App Language**, select **French**
+6. Close and run the app (⌘R)
+
+The entire app interface will now be in French!
 
 ---
 
