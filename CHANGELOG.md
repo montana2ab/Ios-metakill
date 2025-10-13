@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Recent Updates
+
+#### Localization (2024)
+- Complete French translation for entire app
+- English and French Localizable.strings files
+- Localization helper extension for easy string access
+- Language auto-detection based on device settings
+- Comprehensive French installation guide (INSTALLATION_FR.md)
+- Simplified French quick start guide (COMMENCER_ICI.md)
+- Updated README with bilingual support
+
 ### Added - Core Implementation (v1.0.0)
 
 #### Architecture

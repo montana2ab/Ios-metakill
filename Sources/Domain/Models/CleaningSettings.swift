@@ -71,6 +71,14 @@ public enum OutputMode: String, Codable, CaseIterable {
     case newCopy // Create new clean copy
     case newCopyWithTimestamp // Add timestamp to filename
     
+    public var localizationKey: String {
+        switch self {
+        case .replace: return "output_mode.replace"
+        case .newCopy: return "output_mode.new_copy"
+        case .newCopyWithTimestamp: return "output_mode.new_copy_timestamp"
+        }
+    }
+    
     public var displayName: String {
         switch self {
         case .replace: return "Replace Original"
@@ -85,6 +93,22 @@ public enum VideoProcessingMode: String, Codable, CaseIterable {
     case fastCopy // Re-mux without re-encoding (fastest)
     case safeReencode // Always re-encode (most thorough)
     case smartAuto // Try fast copy, fall back to re-encode if needed
+    
+    public var localizationKey: String {
+        switch self {
+        case .fastCopy: return "video_mode.fast_copy"
+        case .safeReencode: return "video_mode.safe_reencode"
+        case .smartAuto: return "video_mode.smart_auto"
+        }
+    }
+    
+    public var descriptionKey: String {
+        switch self {
+        case .fastCopy: return "video_mode.fast_copy.description"
+        case .safeReencode: return "video_mode.safe_reencode.description"
+        case .smartAuto: return "video_mode.smart_auto.description"
+        }
+    }
     
     public var displayName: String {
         switch self {

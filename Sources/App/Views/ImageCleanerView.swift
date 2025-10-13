@@ -18,11 +18,11 @@ struct ImageCleanerView: View {
                         .font(.system(size: 80))
                         .foregroundColor(.gray)
                     
-                    Text("Select Photos to Clean")
+                    Text("image_cleaner.empty.title".localized)
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    Text("Choose photos from your library or files to remove all metadata")
+                    Text("image_cleaner.empty.description".localized)
                         .font(.body)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -30,7 +30,7 @@ struct ImageCleanerView: View {
                     
                     VStack(spacing: 12) {
                         Button(action: { showingPhotoPicker = true }) {
-                            Label("Select from Photos", systemImage: "photo.stack")
+                            Label("image_cleaner.select_from_photos".localized, systemImage: "photo.stack")
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(Color.blue)
@@ -39,7 +39,7 @@ struct ImageCleanerView: View {
                         }
                         
                         Button(action: { showingFilePicker = true }) {
-                            Label("Select from Files", systemImage: "folder")
+                            Label("image_cleaner.select_from_files".localized, systemImage: "folder")
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(Color.blue)
@@ -53,7 +53,7 @@ struct ImageCleanerView: View {
             } else {
                 // Selected Images List
                 List {
-                    Section(header: Text("Selected Photos (\(viewModel.selectedImages.count))")) {
+                    Section(header: Text("\("image_cleaner.selected_photos".localized) (\(viewModel.selectedImages.count))")) {
                         ForEach(viewModel.selectedImages) { item in
                             ImageItemRow(item: item)
                         }
@@ -63,7 +63,7 @@ struct ImageCleanerView: View {
                     }
                     
                     if !viewModel.results.isEmpty {
-                        Section(header: Text("Results")) {
+                        Section(header: Text("image_cleaner.results".localized)) {
                             ForEach(viewModel.results) { result in
                                 ResultRow(result: result)
                             }
@@ -78,7 +78,7 @@ struct ImageCleanerView: View {
                             await viewModel.processImages(settings: appState.settings)
                         }
                     }) {
-                        Text("Clean \(viewModel.selectedImages.count) Photo\(viewModel.selectedImages.count > 1 ? "s" : "")")
+                        Text(viewModel.selectedImages.count > 1 ? "image_cleaner.clean_button_plural".localized(viewModel.selectedImages.count) : "image_cleaner.clean_button".localized(viewModel.selectedImages.count))
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -92,11 +92,11 @@ struct ImageCleanerView: View {
                         ProgressView(value: viewModel.progress)
                             .progressViewStyle(.linear)
                         
-                        Text("Processing \(viewModel.currentIndex)/\(viewModel.selectedImages.count)")
+                        Text("image_cleaner.processing".localized(viewModel.currentIndex, viewModel.selectedImages.count))
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        Button("Cancel") {
+                        Button("image_cleaner.cancel".localized) {
                             viewModel.cancel()
                         }
                         .foregroundColor(.red)

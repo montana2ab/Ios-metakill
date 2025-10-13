@@ -7,10 +7,10 @@ struct BatchProcessorView: View {
     
     var body: some View {
         VStack {
-            Text("Batch Processor")
+            Text("batch_processor.title".localized)
                 .font(.title2)
             
-            Text("Select multiple photos and videos to process together")
+            Text("batch_processor.description".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -18,14 +18,14 @@ struct BatchProcessorView: View {
             
             Spacer()
             
-            Button("Select Files") {
+            Button("batch_processor.select_files".localized) {
                 // Implement file selection
             }
             .padding()
             
             Spacer()
         }
-        .navigationTitle("Batch Processing")
+        .navigationTitle("batch_processor.title".localized)
     }
 }
 
