@@ -95,7 +95,7 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
             }
             
             let processingTime = Date().timeIntervalSince(startTime)
-            let outputSize = try fileSize(at: outputURL)
+            let outputSize = try self.fileSize(at: outputURL)
             
             // Determine which metadata types were removed
             let removedTypes = detectedMetadata.filter { $0.detected }.map { $0.type }
