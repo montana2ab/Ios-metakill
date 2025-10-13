@@ -51,7 +51,7 @@ MetadataKill is a privacy-focused iOS/iPadOS application that removes ALL metada
 - ✅ **Siri Shortcuts**: "Clean my last photo/video"
 - ✅ **Background Tasks**: Continue processing in background
 - ✅ **Accessibility**: VoiceOver, Dynamic Type, high contrast support
-- ✅ **Localization**: English and French
+- ✅ **Localization**: English and French (automatically detects device language)
 
 ---
 
@@ -113,13 +113,15 @@ SwiftUI interface:
 
 ## 🚀 Installation
 
+> **📘 Guide Détaillé** : [English Installation Guide](QUICKSTART.md) • [Guide d'Installation Français](INSTALLATION_FR.md)
+
 ### Requirements
 - **Xcode**: 14.0+ (for iOS 15 support) or 15.0+ (recommended)
 - **iOS/iPadOS**: 15.0+
 - **Swift**: 5.9+
 - **Platforms**: Apple Silicon & Intel simulators supported
 
-### Building from Source
+### Quick Start (5 Steps)
 
 1. **Clone the repository**:
    ```bash
@@ -129,18 +131,26 @@ SwiftUI interface:
 
 2. **Open in Xcode**:
    ```bash
-   open MetadataKill.xcodeproj
-   # or for workspace:
-   # open MetadataKill.xcworkspace
+   open Package.swift
    ```
 
-3. **Configure signing**:
-   - Select your development team in project settings
-   - Update bundle identifier if needed
+3. **Create iOS App Wrapper**:
+   - File > New > Project > iOS App
+   - Name it "MetadataKill"
+   - Add local package from cloned folder
+   - Link the "App" library
 
-4. **Build and run**:
-   - Select target device/simulator
+4. **Configure Info.plist**:
+   - Add `NSPhotoLibraryUsageDescription`
+   - Add `NSPhotoLibraryAddUsageDescription`
+
+5. **Build and Run**:
+   - Select simulator or device
    - Press ⌘R or click Run
+
+For detailed step-by-step instructions with screenshots, see:
+- **[QUICKSTART.md](QUICKSTART.md)** (English)
+- **[INSTALLATION_FR.md](INSTALLATION_FR.md)** (Français)
 
 ### Swift Package Manager
 

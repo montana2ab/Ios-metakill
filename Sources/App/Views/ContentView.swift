@@ -14,11 +14,11 @@ struct ContentView: View {
                         .font(.system(size: 60))
                         .foregroundColor(.blue)
                     
-                    Text("MetadataKill")
+                    Text("app.title".localized)
                         .font(.largeTitle)
                         .fontWeight(.bold)
                     
-                    Text("Clean metadata from photos and videos")
+                    Text("app.subtitle".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -31,8 +31,8 @@ struct ContentView: View {
                 VStack(spacing: 16) {
                     NavigationLink(destination: ImageCleanerView()) {
                         ActionButton(
-                            title: "Clean Photos",
-                            subtitle: "Remove EXIF, GPS, and other metadata",
+                            title: "home.clean_photos".localized,
+                            subtitle: "home.clean_photos.subtitle".localized,
                             icon: "photo.stack",
                             color: .blue
                         )
@@ -40,8 +40,8 @@ struct ContentView: View {
                     
                     NavigationLink(destination: VideoCleanerView()) {
                         ActionButton(
-                            title: "Clean Videos",
-                            subtitle: "Remove QuickTime metadata and location",
+                            title: "home.clean_videos".localized,
+                            subtitle: "home.clean_videos.subtitle".localized,
                             icon: "video.fill",
                             color: .purple
                         )
@@ -49,8 +49,8 @@ struct ContentView: View {
                     
                     NavigationLink(destination: BatchProcessorView()) {
                         ActionButton(
-                            title: "Batch Processing",
-                            subtitle: "Process multiple files at once",
+                            title: "home.batch_processing".localized,
+                            subtitle: "home.batch_processing.subtitle".localized,
                             icon: "square.stack.3d.up.fill",
                             color: .green
                         )
@@ -63,7 +63,7 @@ struct ContentView: View {
                 // Recent Activity
                 if !viewModel.recentResults.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Recent")
+                        Text("home.recent".localized)
                             .font(.headline)
                             .padding(.horizontal)
                         
@@ -159,12 +159,12 @@ struct RecentItemCard: View {
                 .fontWeight(.medium)
                 .lineLimit(1)
             
-            Text("\(result.removedMetadata.count) metadata removed")
+            Text("results.metadata_removed".localized(result.removedMetadata.count))
                 .font(.caption2)
                 .foregroundColor(.secondary)
             
             if let spaceSaved = result.spaceSaved, spaceSaved > 0 {
-                Text("Saved \(ByteCountFormatter.string(fromByteCount: spaceSaved, countStyle: .file))")
+                Text("results.space_saved".localized(ByteCountFormatter.string(fromByteCount: spaceSaved, countStyle: .file)))
                     .font(.caption2)
                     .foregroundColor(.green)
             }

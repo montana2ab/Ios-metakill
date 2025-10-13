@@ -6,27 +6,27 @@ struct SettingsView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("Metadata Removal")) {
-                Toggle("Remove GPS Location", isOn: $appState.settings.removeGPS)
-                Toggle("Remove All Metadata", isOn: $appState.settings.removeAllMetadata)
+            Section(header: Text("settings.metadata_removal".localized)) {
+                Toggle("settings.remove_gps".localized, isOn: $appState.settings.removeGPS)
+                Toggle("settings.remove_all_metadata".localized, isOn: $appState.settings.removeAllMetadata)
                     .disabled(true) // Always on by default
             }
             
-            Section(header: Text("File Options")) {
-                Toggle("Preserve File Date", isOn: $appState.settings.preserveFileDate)
+            Section(header: Text("settings.file_options".localized)) {
+                Toggle("settings.preserve_file_date".localized, isOn: $appState.settings.preserveFileDate)
                 
-                Picker("Output Mode", selection: $appState.settings.outputMode) {
+                Picker("settings.output_mode".localized, selection: $appState.settings.outputMode) {
                     ForEach(OutputMode.allCases, id: \.self) { mode in
-                        Text(mode.displayName).tag(mode)
+                        Text(mode.localizationKey.localized).tag(mode)
                     }
                 }
             }
             
-            Section(header: Text("Image Settings")) {
-                Toggle("Convert HEIC to JPEG", isOn: $appState.settings.heicToJPEG)
+            Section(header: Text("settings.image_settings".localized)) {
+                Toggle("settings.convert_heic_to_jpeg".localized, isOn: $appState.settings.heicToJPEG)
                 
                 HStack {
-                    Text("HEIC Quality")
+                    Text("settings.heic_quality".localized)
                     Spacer()
                     Text("\(Int(appState.settings.heicQuality * 100))%")
                         .foregroundColor(.secondary)
@@ -34,56 +34,56 @@ struct SettingsView: View {
                 Slider(value: $appState.settings.heicQuality, in: 0.5...1.0, step: 0.05)
                 
                 HStack {
-                    Text("JPEG Quality")
+                    Text("settings.jpeg_quality".localized)
                     Spacer()
                     Text("\(Int(appState.settings.jpegQuality * 100))%")
                         .foregroundColor(.secondary)
                 }
                 Slider(value: $appState.settings.jpegQuality, in: 0.5...1.0, step: 0.05)
                 
-                Toggle("Force sRGB Color", isOn: $appState.settings.forceSRGB)
-                Toggle("Bake Orientation", isOn: $appState.settings.bakeOrientation)
+                Toggle("settings.force_srgb".localized, isOn: $appState.settings.forceSRGB)
+                Toggle("settings.bake_orientation".localized, isOn: $appState.settings.bakeOrientation)
             }
             
-            Section(header: Text("Video Settings")) {
-                Picker("Processing Mode", selection: $appState.settings.videoProcessingMode) {
+            Section(header: Text("settings.video_settings".localized)) {
+                Picker("settings.processing_mode".localized, selection: $appState.settings.videoProcessingMode) {
                     ForEach(VideoProcessingMode.allCases, id: \.self) { mode in
-                        Text(mode.displayName).tag(mode)
+                        Text(mode.localizationKey.localized).tag(mode)
                     }
                 }
                 
-                Text(appState.settings.videoProcessingMode.description)
+                Text(appState.settings.videoProcessingMode.descriptionKey.localized)
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
-                Toggle("Preserve HDR", isOn: $appState.settings.preserveHDR)
+                Toggle("settings.preserve_hdr".localized, isOn: $appState.settings.preserveHDR)
             }
             
-            Section(header: Text("Performance")) {
-                Toggle("Thermal Monitoring", isOn: $appState.settings.enableThermalMonitoring)
+            Section(header: Text("settings.performance".localized)) {
+                Toggle("settings.thermal_monitoring".localized, isOn: $appState.settings.enableThermalMonitoring)
                 
-                Stepper("Concurrent Operations: \(appState.settings.maxConcurrentOperations)",
+                Stepper("settings.concurrent_operations".localized(appState.settings.maxConcurrentOperations),
                        value: $appState.settings.maxConcurrentOperations,
                        in: 1...8)
             }
             
-            Section(header: Text("Privacy")) {
-                Toggle("Enable Logging", isOn: $appState.settings.enablePrivateLogging)
+            Section(header: Text("settings.privacy".localized)) {
+                Toggle("settings.enable_logging".localized, isOn: $appState.settings.enablePrivateLogging)
                 
-                Text("All processing happens on-device. No data is collected or shared.")
+                Text("settings.privacy_note".localized)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
             
             Section {
-                Button("Reset to Defaults") {
+                Button("settings.reset_defaults".localized) {
                     appState.settings = .default
                     appState.saveSettings()
                 }
                 .foregroundColor(.red)
             }
         }
-        .navigationTitle("Settings")
+        .navigationTitle("settings.title".localized)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: appState.settings) { _ in
             appState.saveSettings()

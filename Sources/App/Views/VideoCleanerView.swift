@@ -16,18 +16,18 @@ struct VideoCleanerView: View {
                         .font(.system(size: 80))
                         .foregroundColor(.gray)
                     
-                    Text("Select Videos to Clean")
+                    Text("video_cleaner.empty.title".localized)
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    Text("Choose videos to remove QuickTime metadata, GPS location, and chapters")
+                    Text("video_cleaner.empty.description".localized)
                         .font(.body)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                     
                     Button(action: { showingFilePicker = true }) {
-                        Label("Select Videos", systemImage: "folder")
+                        Label("video_cleaner.select_videos".localized, systemImage: "folder")
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.purple)
@@ -40,7 +40,7 @@ struct VideoCleanerView: View {
             } else {
                 // Selected Videos List
                 List {
-                    Section(header: Text("Selected Videos (\(viewModel.selectedVideos.count))")) {
+                    Section(header: Text("\("video_cleaner.selected_videos".localized) (\(viewModel.selectedVideos.count))")) {
                         ForEach(viewModel.selectedVideos) { item in
                             VideoItemRow(item: item)
                         }
@@ -50,7 +50,7 @@ struct VideoCleanerView: View {
                     }
                     
                     if !viewModel.results.isEmpty {
-                        Section(header: Text("Results")) {
+                        Section(header: Text("video_cleaner.results".localized)) {
                             ForEach(viewModel.results) { result in
                                 ResultRow(result: result)
                             }
@@ -65,7 +65,7 @@ struct VideoCleanerView: View {
                             await viewModel.processVideos(settings: appState.settings)
                         }
                     }) {
-                        Text("Clean \(viewModel.selectedVideos.count) Video\(viewModel.selectedVideos.count > 1 ? "s" : "")")
+                        Text(viewModel.selectedVideos.count > 1 ? "video_cleaner.clean_button_plural".localized(viewModel.selectedVideos.count) : "video_cleaner.clean_button".localized(viewModel.selectedVideos.count))
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -79,11 +79,11 @@ struct VideoCleanerView: View {
                         ProgressView(value: viewModel.progress)
                             .progressViewStyle(.linear)
                         
-                        Text("Processing \(viewModel.currentIndex)/\(viewModel.selectedVideos.count)")
+                        Text("video_cleaner.processing".localized(viewModel.currentIndex, viewModel.selectedVideos.count))
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        Button("Cancel") {
+                        Button("video_cleaner.cancel".localized) {
                             viewModel.cancel()
                         }
                         .foregroundColor(.red)
@@ -92,7 +92,7 @@ struct VideoCleanerView: View {
                 }
             }
         }
-        .navigationTitle("Clean Videos")
+        .navigationTitle("video_cleaner.title".localized)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingFilePicker) {
             DocumentPickerView(selectedFiles: $viewModel.selectedVideos)
