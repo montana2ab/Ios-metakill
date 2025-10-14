@@ -12,6 +12,9 @@ let package = Package(
     ],
     products: [
         .library(
+            name: "App",
+            targets: ["App"]),
+        .library(
             name: "MetadataKill",
             targets: ["App"]),
         .library(
