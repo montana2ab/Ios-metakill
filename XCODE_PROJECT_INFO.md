@@ -81,10 +81,12 @@ You can customize the project by:
 ### Local Package Reference
 The project uses `XCLocalSwiftPackageReference` to link to the parent directory:
 ```
-relativePath = ..
+relativePath = ".."
 ```
 
 This means the Swift Package (`Package.swift`) is loaded from one directory up, allowing seamless integration with the modular architecture.
+
+**Important**: The package reference uses a **relative path only** (no absolute paths), ensuring the project works correctly on any machine after cloning. Xcode resolves this path relative to the `.xcodeproj` file location.
 
 ### Build Targets
 - **MetadataKill (iOS App)**: Main application target
@@ -136,14 +138,58 @@ For simulator builds, no paid Apple Developer account is required.
 
 ## Troubleshooting
 
-### "No such module 'App'"
-- Ensure you opened `MetadataKill.xcodeproj`, not just the Swift Package
-- Clean build folder: Product > Clean Build Folder (⇧⌘K)
-- Rebuild: Product > Build (⌘B)
+### "No such module 'App'" or "Missing package product 'App'"
+This typically indicates a package resolution issue. Try these steps in order:
+
+1. **Reset Package Caches**:
+   - File > Packages > Reset Package Caches
+   - Wait for Xcode to complete
+
+2. **Resolve Package Versions**:
+   - File > Packages > Resolve Package Versions
+   - This should detect the local package
+
+3. **Clean Build Folder**:
+   - Product > Clean Build Folder (⇧⌘K)
+   - Then rebuild: Product > Build (⌘B)
+
+4. **Verify Package Location**:
+   - The Package.swift file should be in the parent directory of the .xcodeproj file
+   - Check that the file exists: `ls ../Package.swift` from the project directory
+
+5. **Remove Derived Data** (if above steps don't work):
+   ```bash
+   rm -rf ~/Library/Developer/Xcode/DerivedData/MetadataKill-*
+   ```
+   Then reopen the project in Xcode
+
+### "Package manifest at [absolute path] cannot be accessed"
+This error occurs when Xcode has cached an incorrect absolute path to the package. To fix:
+
+1. **Close Xcode completely** (Quit, don't just close the window)
+
+2. **Delete Xcode's cached package data**:
+   ```bash
+   cd ~/Library/Developer/Xcode/DerivedData
+   rm -rf ModuleCache.noindex
+   rm -rf MetadataKill-*/
+   ```
+
+3. **Clean the project's SPM cache**:
+   ```bash
+   cd /path/to/Ios-metakill
+   rm -rf .build
+   rm -rf MetadataKill.xcodeproj/project.xcworkspace/xcuserdata
+   ```
+
+4. **Reopen the project** and let Xcode resolve packages again
+
+The project uses a **relative path** to reference the local Swift Package, so it should work on any machine without absolute path dependencies.
 
 ### Package Resolution Issues
 - File > Packages > Reset Package Caches
 - File > Packages > Resolve Package Versions
+- File > Packages > Update to Latest Package Versions (for remote packages only)
 
 ### Signing Errors
 - Check that you've selected a team in "Signing & Capabilities"

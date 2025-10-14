@@ -39,6 +39,7 @@
 				A1000012000000000000001 /* MetadataKill */,
 				A1000013000000000000001 /* Products */,
 				A1000014000000000000001 /* Frameworks */,
+				A1000009000000000000001 /* Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -48,7 +49,6 @@
 				A1000002000000000000001 /* MetadataKillApp.swift */,
 				A1000004000000000000001 /* ContentView.swift */,
 				A1000006000000000000001 /* Assets.xcassets */,
-				A1000009000000000000001 /* Info.plist */,
 			);
 			path = MetadataKill;
 			sourceTree = "<group>";
@@ -356,7 +356,7 @@
 /* Begin XCLocalSwiftPackageReference section */
 		A1000050000000000000001 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ..;
+			relativePath = "..";
 		};
 /* End XCLocalSwiftPackageReference section */
 
