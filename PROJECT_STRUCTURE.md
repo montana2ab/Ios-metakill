@@ -194,6 +194,7 @@ The following are automatically excluded:
 
 For issues related to:
 - **Xcode project setup**: See [XCODE_PROJECT_INFO.md](XCODE_PROJECT_INFO.md)
+- **Package resolution errors**: See [PACKAGE_RESOLUTION.md](PACKAGE_RESOLUTION.md)
 - **Swift Package**: See [README.md](README.md)
 - **Installation**: See [QUICKSTART.md](QUICKSTART.md) or [INSTALLATION_FR.md](INSTALLATION_FR.md)
 - **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)

@@ -143,8 +143,19 @@ The `Info.plist` is already provided. Ensure these keys are present:
 **Error**: "No such module 'CoreGraphics'"
 - **Solution**: You're building on Linux. Build requires macOS with Xcode.
 
-**Error**: "Failed to resolve dependencies"
-- **Solution**: Run `swift package update` or use Xcode's **File > Packages > Update to Latest Package Versions**
+**Error**: "Failed to resolve dependencies" or "Missing package product 'App'"
+- **Solution**: See [PACKAGE_RESOLUTION.md](PACKAGE_RESOLUTION.md) for comprehensive troubleshooting
+- **Quick fix**: 
+  - File > Packages > Reset Package Caches
+  - File > Packages > Resolve Package Versions
+  - Product > Clean Build Folder (⇧⌘K)
+
+**Error**: "Package manifest at [path] cannot be accessed"
+- **Solution**: See [PACKAGE_RESOLUTION.md](PACKAGE_RESOLUTION.md) for detailed steps
+- **Quick fix**:
+  - Close Xcode completely
+  - Delete DerivedData: `rm -rf ~/Library/Developer/Xcode/DerivedData/MetadataKill-*`
+  - Reopen project
 
 ### Runtime Issues
 
