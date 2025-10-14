@@ -458,9 +458,29 @@ Ios-metakill/
 
 ---
 
+## 📚 Documentation
+
+### English Documentation
+- **[Architecture Guide](ARCHITECTURE.md)** - Detailed architecture and design patterns
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+- **[Privacy Policy](PRIVACY.md)** - Privacy and data handling information
+- **[Quick Start](QUICKSTART.md)** - Getting started guide
+- **[Package Resolution](PACKAGE_RESOLUTION.md)** - Troubleshooting package issues
+
+### Documentation Française
+- **[Guide d'Architecture](ARCHITECTURE_FR.md)** - Architecture détaillée et patterns de conception
+- **[Guide de Contribution](CONTRIBUTING_FR.md)** - Comment contribuer au projet
+- **[Politique de Confidentialité](PRIVACY_FR.md)** - Confidentialité et gestion des données
+- **[Démarrage Rapide](COMMENCER_ICI.md)** - Guide de démarrage
+- **[Installation](INSTALLATION_FR.md)** - Guide d'installation détaillé
+
+---
+
 ## 🤝 Contributing
 
-Contributions welcome! Please:
+Contributions welcome! Please see our [Contributing Guide](CONTRIBUTING.md) ([Guide de Contribution](CONTRIBUTING_FR.md)) for details.
+
+**Quick Start:**
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
