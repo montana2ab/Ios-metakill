@@ -178,6 +178,17 @@ swift test     # Run unit tests
 
 **Note**: Some modules require iOS frameworks (CoreGraphics, AVFoundation) and will only compile on macOS with Xcode.
 
+### Troubleshooting
+
+If you encounter build or package resolution errors, see:
+- **[PACKAGE_RESOLUTION.md](PACKAGE_RESOLUTION.md)** - Complete guide for fixing package resolution issues
+- **[XCODE_PROJECT_INFO.md](XCODE_PROJECT_INFO.md#troubleshooting)** - Xcode project troubleshooting
+
+**Common fixes**:
+- Reset package caches: File > Packages > Reset Package Caches
+- Clean build folder: Product > Clean Build Folder (⇧⌘K)
+- Restart Xcode if package resolution fails
+
 ---
 
 ## 🌍 Languages
