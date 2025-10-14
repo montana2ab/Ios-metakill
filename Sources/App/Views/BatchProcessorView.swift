@@ -36,8 +36,19 @@ final class BatchProcessorViewModel: ObservableObject {
 }
 
 #Preview {
-    NavigationStack {
-        BatchProcessorView()
-            .environmentObject(AppState())
+    if #available(iOS 16.0, *) {
+        NavigationStack {
+            BatchProcessorView()
+                .environmentObject(AppState())
+        }
+    } else {
+        // Fallback on earlier versions
+    };if #available(iOS 16.0, *) {
+        NavigationStack {
+            BatchProcessorView()
+                .environmentObject(AppState())
+        }
+    } else {
+        // Fallback on earlier versions
     }
 }

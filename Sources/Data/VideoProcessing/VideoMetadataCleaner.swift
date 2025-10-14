@@ -161,7 +161,16 @@ public final class VideoMetadataCleaner {
         
         // Check for chapters
         if #available(iOS 16.0, *) {
-            let chapterGroups = try await asset.load(.chapterMetadataGroups)
+            let chapterGroups = try await asset.loadChapterMetadataGroups(withTitleLocale: Locale.current, containingItemsWithCommonKeys: [])
+            if !chapterGroups.isEmpty {
+                detectedMetadata.append(MetadataInfo(
+                    type: .chapters,
+                    detected: true,
+                    fieldCount: chapterGroups.count
+                ))
+            }
+        } else {
+            let chapterGroups = asset.chapterMetadataGroups(withTitleLocale: Locale.current, containingItemsWithCommonKeys: [])
             if !chapterGroups.isEmpty {
                 detectedMetadata.append(MetadataInfo(
                     type: .chapters,

@@ -3,14 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3CA3E4512E9F04DC0034A953 /* MetadataKill in Frameworks */ = {isa = PBXBuildFile; productRef = 3CA3E4502E9F04DC0034A953 /* MetadataKill */; };
 		A1000001000000000000001 /* MetadataKillApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000002000000000000001 /* MetadataKillApp.swift */; };
 		A1000003000000000000001 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000004000000000000001 /* ContentView.swift */; };
 		A1000005000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000006000000000000001 /* Assets.xcassets */; };
-		A1000007000000000000001 /* App in Frameworks */ = {isa = PBXBuildFile; productRef = A1000008000000000000001 /* App */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +26,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1000007000000000000001 /* App in Frameworks */,
+				3CA3E4512E9F04DC0034A953 /* MetadataKill in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,7 +85,7 @@
 			);
 			name = MetadataKill;
 			packageProductDependencies = (
-				A1000008000000000000001 /* App */,
+				3CA3E4502E9F04DC0034A953 /* MetadataKill */,
 			);
 			productName = MetadataKill;
 			productReference = A1000000000000000000001 /* MetadataKill.app */;
@@ -116,7 +116,7 @@
 			);
 			mainGroup = A1000011000000000000001;
 			packageReferences = (
-				A1000050000000000000001 /* XCLocalSwiftPackageReference ".." */,
+				3CA3E44F2E9F04DC0034A953 /* XCLocalSwiftPackageReference "../Ios-metakill" */,
 			);
 			productRefGroup = A1000013000000000000001 /* Products */;
 			projectDirPath = "";
@@ -354,17 +354,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		A1000050000000000000001 /* XCLocalSwiftPackageReference ".." */ = {
+		3CA3E44F2E9F04DC0034A953 /* XCLocalSwiftPackageReference "../Ios-metakill" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "..";
+			relativePath = "../Ios-metakill";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		A1000008000000000000001 /* App */ = {
+		3CA3E4502E9F04DC0034A953 /* MetadataKill */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A1000050000000000000001 /* XCLocalSwiftPackageReference ".." */;
-			productName = App;
+			productName = MetadataKill;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

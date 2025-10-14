@@ -101,12 +101,12 @@ public final class ImageMetadataCleaner {
             ))
         }
         
-        // Check for XMP
-        if let xmp = properties[kCGImagePropertyXMPDictionary as String] as? [String: Any], !xmp.isEmpty {
+        // Check for XMP via CGImageMetadata (avoids unavailable constant keys)
+        if CGImageSourceCopyMetadataAtIndex(imageSource, 0, nil) != nil {
             detectedMetadata.append(MetadataInfo(
                 type: .xmp,
                 detected: true,
-                fieldCount: xmp.count
+                fieldCount: 1
             ))
         }
         
@@ -355,3 +355,4 @@ extension ImageMetadataCleaner {
         return cleanData
     }
 }
+

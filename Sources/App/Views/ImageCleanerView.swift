@@ -310,8 +310,12 @@ struct DocumentPickerView: View {
 }
 
 #Preview {
-    NavigationStack {
-        ImageCleanerView()
-            .environmentObject(AppState())
+    if #available(iOS 16.0, *) {
+        NavigationStack {
+            ImageCleanerView()
+                .environmentObject(AppState())
+        }
+    } else {
+        // Fallback on earlier versions
     }
 }

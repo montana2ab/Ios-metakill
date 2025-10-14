@@ -35,7 +35,7 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
             )
             
             // Clean based on processing mode
-            let detectedMetadata: [MetadataInfo]
+            var detectedMetadata: [MetadataInfo] = []
             
             switch settings.videoProcessingMode {
             case .fastCopy:
@@ -68,7 +68,7 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                         try? FileManager.default.removeItem(at: outputURL)
                         
                         // Re-encode
-                        _ = try await cleaner.cleanVideoReencode(
+                        detectedMetadata = try await cleaner.cleanVideoReencode(
                             from: videoURL,
                             outputURL: outputURL,
                             settings: settings
@@ -127,3 +127,4 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
         return attributes[.size] as? Int64 ?? 0
     }
 }
+

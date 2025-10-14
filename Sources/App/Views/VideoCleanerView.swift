@@ -187,8 +187,12 @@ final class VideoCleanerViewModel: ObservableObject {
 }
 
 #Preview {
-    NavigationStack {
-        VideoCleanerView()
-            .environmentObject(AppState())
+    if #available(iOS 16.0, *) {
+        NavigationStack {
+            VideoCleanerView()
+                .environmentObject(AppState())
+        }
+    } else {
+        // Fallback on earlier versions
     }
 }

@@ -6,79 +6,9 @@ struct ContentView: View {
     @StateObject private var viewModel = HomeViewModel()
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 24) {
-                // App Title
-                VStack(spacing: 8) {
-                    Image(systemName: "shield.lefthalf.filled")
-                        .font(.system(size: 60))
-                        .foregroundColor(.blue)
-                    
-                    Text("app.title".localized)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    
-                    Text("app.subtitle".localized)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.top, 40)
-                
-                Spacer()
-                
-                // Main Actions
-                VStack(spacing: 16) {
-                    NavigationLink(destination: ImageCleanerView()) {
-                        ActionButton(
-                            title: "home.clean_photos".localized,
-                            subtitle: "home.clean_photos.subtitle".localized,
-                            icon: "photo.stack",
-                            color: .blue
-                        )
-                    }
-                    
-                    NavigationLink(destination: VideoCleanerView()) {
-                        ActionButton(
-                            title: "home.clean_videos".localized,
-                            subtitle: "home.clean_videos.subtitle".localized,
-                            icon: "video.fill",
-                            color: .purple
-                        )
-                    }
-                    
-                    NavigationLink(destination: BatchProcessorView()) {
-                        ActionButton(
-                            title: "home.batch_processing".localized,
-                            subtitle: "home.batch_processing.subtitle".localized,
-                            icon: "square.stack.3d.up.fill",
-                            color: .green
-                        )
-                    }
-                }
-                .padding(.horizontal)
-                
-                Spacer()
-                
-                // Recent Activity
-                if !viewModel.recentResults.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("home.recent".localized)
-                            .font(.headline)
-                            .padding(.horizontal)
-                        
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 12) {
-                                ForEach(viewModel.recentResults.prefix(5)) { result in
-                                    RecentItemCard(result: result)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
-                }
-                
-                Spacer()
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                homeContent
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -88,6 +18,94 @@ struct ContentView: View {
                     }
                 }
             }
+        } else {
+            NavigationView {
+                homeContent
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: SettingsView()) {
+                        Image(systemName: "gear")
+                    }
+                }
+            }
+        }
+    }
+    
+    private var homeContent: some View {
+        VStack(spacing: 24) {
+            // App Title
+            VStack(spacing: 8) {
+                Image(systemName: "shield.lefthalf.filled")
+                    .font(.system(size: 60))
+                    .foregroundColor(.blue)
+                
+                Text("app.title".localized)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                
+                Text("app.subtitle".localized)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.top, 40)
+            
+            Spacer()
+            
+            // Main Actions
+            VStack(spacing: 16) {
+                NavigationLink(destination: ImageCleanerView()) {
+                    ActionButton(
+                        title: "home.clean_photos".localized,
+                        subtitle: "home.clean_photos.subtitle".localized,
+                        icon: "photo.stack",
+                        color: .blue
+                    )
+                }
+                
+                NavigationLink(destination: VideoCleanerView()) {
+                    ActionButton(
+                        title: "home.clean_videos".localized,
+                        subtitle: "home.clean_videos.subtitle".localized,
+                        icon: "video.fill",
+                        color: .purple
+                    )
+                }
+                
+                NavigationLink(destination: BatchProcessorView()) {
+                    ActionButton(
+                        title: "home.batch_processing".localized,
+                        subtitle: "home.batch_processing.subtitle".localized,
+                        icon: "square.stack.3d.up.fill",
+                        color: .green
+                    )
+                }
+            }
+            .padding(.horizontal)
+            
+            Spacer()
+            
+            // Recent Activity
+            if !viewModel.recentResults.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("home.recent".localized)
+                        .font(.headline)
+                        .padding(.horizontal)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(viewModel.recentResults.prefix(5)) { result in
+                                RecentItemCard(result: result)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+            }
+            
+            Spacer()
         }
     }
 }

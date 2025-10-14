@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import Domain
 
 struct SettingsView: View {
@@ -85,15 +86,19 @@ struct SettingsView: View {
         }
         .navigationTitle("settings.title".localized)
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: appState.settings) { _ in
+        .onReceive(appState.$settings) { _ in
             appState.saveSettings()
         }
     }
 }
 
 #Preview {
-    NavigationStack {
-        SettingsView()
-            .environmentObject(AppState())
+    if #available(iOS 16.0, *) {
+        NavigationStack {
+            SettingsView()
+                .environmentObject(AppState())
+        }
+    } else {
+        // Fallback on earlier versions
     }
 }
