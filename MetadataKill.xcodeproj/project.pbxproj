@@ -122,7 +122,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A1000020000000000000000001 /* MetadataKill */,
+				A1000020000000000000001 /* MetadataKill */,
 			);
 		};
 /* End PBXProject section */
