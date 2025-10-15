@@ -5,10 +5,10 @@ This document tracks pending tasks for MetadataKill development.
 ## High Priority 🔴
 
 ### Core Functionality
-- [ ] **Create Xcode Project** (requires macOS)
-  - Generate `.xcodeproj` file
-  - Configure build settings
-  - Set up signing certificates
+- [x] **Create Xcode Project** ✅
+  - `.xcodeproj` file exists and configured
+  - Build settings configured
+  - Ready for signing certificates (requires developer account)
   
 - [ ] **Implement PhotoKit Integration**
   - PHPickerViewController for photo selection
@@ -75,12 +75,15 @@ This document tracks pending tasks for MetadataKill development.
   - Export results summary (CSV/JSON)
 
 ### Localization
-- [x] **French Translation** ✅
-  - Created Localizable.strings for EN/FR
-  - Translated all UI strings
+- [x] **French Translation** ✅ (COMPLETE - 2025-10-15)
+  - Created Localizable.strings for EN/FR (100 strings each)
+  - Translated all UI strings (100% coverage)
   - Updated all views to use localization
   - Added localization helper extension
   - Created comprehensive French installation guide
+  - Fixed all remaining hardcoded strings in views
+  - Added 8 new localization keys for missing strings
+  - InfoPlist.strings for both languages complete
   
 - [ ] **Additional Languages** (Future)
   - Spanish
