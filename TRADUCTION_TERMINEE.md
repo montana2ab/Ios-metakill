@@ -206,4 +206,4 @@ L'application MetadataKill est maintenant **100% traduite en français** et **10
 
 ---
 
-*Document créé le : 15 octobre 2025*
+*Dernière mise à jour : 15 octobre 2025*
