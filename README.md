@@ -20,49 +20,59 @@
 
 ---
 
-## 📱 Overview
+## 📱 Overview / Aperçu
+
+**English:**
 
 MetadataKill is a privacy-focused iOS/iPadOS application that removes ALL metadata from photos and videos without compromising quality. All processing happens locally on your device—no data ever leaves your iPhone or iPad.
 
-### 🎯 Key Features
+**Français:**
 
-#### Image Processing
-- ✅ **Complete Metadata Removal**: EXIF, IPTC, XMP, GPS, color profiles, thumbnails
-- ✅ **Format Support**: JPEG, HEIC/HEIF, PNG, WebP, RAW/DNG (converts to JPEG)
-- ✅ **Orientation Baking**: Corrects image rotation by redrawing pixels
-- ✅ **Color Space Management**: Optional sRGB conversion from Display P3
-- ✅ **PNG Chunk Removal**: Strips tEXt, iTXt, zTXt chunks
-- ✅ **Quality Control**: Adjustable JPEG/HEIC quality settings
-- ✅ **HEIC to JPEG Conversion**: Optional format conversion
+MetadataKill est une application iOS/iPadOS axée sur la confidentialité qui supprime TOUTES les métadonnées des photos et vidéos sans compromettre la qualité. Tout le traitement se fait localement sur votre appareil — aucune donnée ne quitte jamais votre iPhone ou iPad.
 
-#### Video Processing
-- ✅ **Fast Re-muxing**: No re-encoding for maximum speed (default)
-- ✅ **Smart Processing**: Automatic fallback to re-encoding if metadata persists
-- ✅ **Safe Re-encoding**: H.264/AAC output with complete metadata removal
-- ✅ **QuickTime Metadata**: Removes udta, ISO6709 location, chapters, timecode
-- ✅ **HDR Support**: Optional HEVC 10-bit preservation
-- ✅ **Validation**: Post-processing checks for duration, tracks, and metadata
+### 🎯 Key Features / Caractéristiques Principales
 
-#### Live Photos & Special Formats
-- ✅ **Live Photo Support**: Processes both image and video components
-- ✅ **Burst Photos**: Handles multiple sequential images
-- ✅ **Depth/Portrait**: Cleans depth map metadata
-- ✅ **iCloud Integration**: Automatic download when needed
+#### Image Processing / Traitement d'Images
+- ✅ **Complete Metadata Removal** / **Suppression complète des métadonnées** : EXIF, IPTC, XMP, GPS, profils de couleurs, vignettes
+- ✅ **Format Support** / **Support de formats** : JPEG, HEIC/HEIF, PNG, WebP, RAW/DNG (conversion en JPEG)
+- ✅ **Orientation Baking** / **Correction d'orientation** : Corrige la rotation d'image en redessinant les pixels
+- ✅ **Color Space Management** / **Gestion d'espace colorimétrique** : Conversion optionnelle sRGB depuis Display P3
+- ✅ **PNG Chunk Removal** / **Suppression de chunks PNG** : Supprime les chunks tEXt, iTXt, zTXt
+- ✅ **Quality Control** / **Contrôle de qualité** : Paramètres de qualité JPEG/HEIC ajustables
+- ✅ **HEIC to JPEG Conversion** / **Conversion HEIC vers JPEG** : Conversion de format optionnelle
 
-#### User Experience
-- ✅ **SwiftUI Interface**: Native, responsive design
-- ✅ **Batch Processing**: Handle multiple files with progress tracking
-- ✅ **Share Extension**: Clean and share directly from Photos app
-- ✅ **Siri Shortcuts**: "Clean my last photo/video"
-- ✅ **Background Tasks**: Continue processing in background
-- ✅ **Accessibility**: VoiceOver, Dynamic Type, high contrast support
-- ✅ **Localization**: English and French (automatically detects device language)
+#### Video Processing / Traitement de Vidéos
+- ✅ **Fast Re-muxing** / **Re-muxage rapide** : Sans réencodage pour vitesse maximale (par défaut)
+- ✅ **Smart Processing** / **Traitement intelligent** : Repli automatique vers le réencodage si métadonnées persistantes
+- ✅ **Safe Re-encoding** / **Réencodage sécurisé** : Sortie H.264/AAC avec suppression complète des métadonnées
+- ✅ **QuickTime Metadata** / **Métadonnées QuickTime** : Supprime udta, localisation ISO6709, chapitres, timecode
+- ✅ **HDR Support** / **Support HDR** : Préservation optionnelle HEVC 10-bit
+- ✅ **Validation** / **Validation** : Vérifications post-traitement de durée, pistes et métadonnées
+
+#### Live Photos & Special Formats / Live Photos et Formats Spéciaux
+- ✅ **Live Photo Support** / **Support Live Photo** : Traite les composants image et vidéo
+- ✅ **Burst Photos** / **Photos en rafale** : Gère plusieurs images séquentielles
+- ✅ **Depth/Portrait** / **Profondeur/Portrait** : Nettoie les métadonnées de carte de profondeur
+- ✅ **iCloud Integration** / **Intégration iCloud** : Téléchargement automatique si nécessaire
+
+#### User Experience / Expérience Utilisateur
+- ✅ **SwiftUI Interface** / **Interface SwiftUI** : Design natif et réactif
+- ✅ **Batch Processing** / **Traitement par lot** : Gère plusieurs fichiers avec suivi de progression
+- ✅ **Share Extension** / **Extension de partage** : Nettoyez et partagez directement depuis l'app Photos
+- ✅ **Siri Shortcuts** / **Raccourcis Siri** : "Nettoie ma dernière photo/vidéo"
+- ✅ **Background Tasks** / **Tâches en arrière-plan** : Continue le traitement en arrière-plan
+- ✅ **Accessibility** / **Accessibilité** : VoiceOver, Dynamic Type, support contraste élevé
+- ✅ **Localization** / **Localisation** : Anglais et français (détection automatique de la langue de l'appareil)
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Architecture / Architecture
 
-MetadataKill follows **Clean Architecture** principles with clear separation of concerns:
+**English:** MetadataKill follows **Clean Architecture** principles with clear separation of concerns.
+
+**Français:** MetadataKill suit les principes de l'**Architecture Propre** (Clean Architecture) avec une séparation claire des préoccupations.
+
+**Diagram / Diagramme:**
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -225,28 +235,23 @@ The entire app interface will now be in French!
 
 ---
 
-## 📖 Usage
+## 📖 Usage / Utilisation
 
-### Basic Workflow
+### Basic Workflow / Flux de travail de base
 
-1. **Select Media**:
-   - Choose photos/videos from library
-   - Import from Files app
-   - Use drag & drop (iPad)
+**English:**
 
-2. **Configure Settings** (optional):
-   - Access via Settings gear icon
-   - Adjust quality, processing mode, etc.
+1. **Select Media**: Choose photos/videos from library, import from Files app, or use drag & drop (iPad)
+2. **Configure Settings** (optional): Access via Settings gear icon, adjust quality, processing mode, etc.
+3. **Clean Metadata**: Tap "Clean Photos" or "Clean Videos", monitor progress, review results
+4. **Access Cleaned Files**: Files saved to Documents/MetadataKill_Clean/, original files remain untouched (by default), option to share directly
 
-3. **Clean Metadata**:
-   - Tap "Clean Photos" or "Clean Videos"
-   - Monitor progress
-   - Review results
+**Français:**
 
-4. **Access Cleaned Files**:
-   - Files saved to: Documents/MetadataKill_Clean/
-   - Original files remain untouched (by default)
-   - Option to share directly
+1. **Sélectionner les médias** : Choisissez photos/vidéos de la bibliothèque, importez depuis l'app Fichiers, ou utilisez le glisser-déposer (iPad)
+2. **Configurer les paramètres** (optionnel) : Accédez via l'icône d'engrenage Réglages, ajustez la qualité, le mode de traitement, etc.
+3. **Nettoyer les métadonnées** : Appuyez sur "Nettoyer les Photos" ou "Nettoyer les Vidéos", surveillez la progression, examinez les résultats
+4. **Accéder aux fichiers nettoyés** : Fichiers sauvegardés dans Documents/MetadataKill_Clean/, les fichiers originaux restent intacts (par défaut), option de partage direct
 
 ### Settings Reference
 
@@ -278,15 +283,17 @@ The entire app interface will now be in French!
 
 ---
 
-## 🔒 Privacy
+## 🔒 Privacy / Confidentialité
 
-### Core Principles
+See full details: [Privacy Policy](PRIVACY.md) • [Politique de Confidentialité](PRIVACY_FR.md)
 
-✅ **100% On-Device Processing**: All operations happen locally  
-✅ **No Network Access**: App works completely offline  
-✅ **No Data Collection**: Zero telemetry, analytics, or tracking  
-✅ **No Cloud Services**: No iCloud sync, no external servers  
-✅ **Optional Logging**: Local-only, encrypted, technical data
+### Core Principles / Principes Fondamentaux
+
+✅ **100% On-Device Processing / Traitement 100% sur l'appareil** : Toutes les opérations se déroulent localement  
+✅ **No Network Access / Aucun accès réseau** : L'application fonctionne complètement hors ligne  
+✅ **No Data Collection / Aucune collecte de données** : Zéro télémétrie, analyses ou suivi  
+✅ **No Cloud Services / Aucun service cloud** : Pas de synchronisation iCloud, pas de serveurs externes  
+✅ **Optional Logging / Journalisation optionnelle** : Locale uniquement, chiffrée, données techniques
 
 ### Privacy Manifest
 
@@ -458,9 +465,29 @@ Ios-metakill/
 
 ---
 
+## 📚 Documentation
+
+### English Documentation
+- **[Architecture Guide](ARCHITECTURE.md)** - Detailed architecture and design patterns
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+- **[Privacy Policy](PRIVACY.md)** - Privacy and data handling information
+- **[Quick Start](QUICKSTART.md)** - Getting started guide
+- **[Package Resolution](PACKAGE_RESOLUTION.md)** - Troubleshooting package issues
+
+### Documentation Française
+- **[Guide d'Architecture](ARCHITECTURE_FR.md)** - Architecture détaillée et patterns de conception
+- **[Guide de Contribution](CONTRIBUTING_FR.md)** - Comment contribuer au projet
+- **[Politique de Confidentialité](PRIVACY_FR.md)** - Confidentialité et gestion des données
+- **[Démarrage Rapide](COMMENCER_ICI.md)** - Guide de démarrage
+- **[Installation](INSTALLATION_FR.md)** - Guide d'installation détaillé
+
+---
+
 ## 🤝 Contributing
 
-Contributions welcome! Please:
+Contributions welcome! Please see our [Contributing Guide](CONTRIBUTING.md) ([Guide de Contribution](CONTRIBUTING_FR.md)) for details.
+
+**Quick Start:**
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)

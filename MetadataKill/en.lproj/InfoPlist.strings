@@ -1,0 +1,8 @@
+/* Privacy - Photo Library Usage Description */
+"NSPhotoLibraryUsageDescription" = "MetadataKill needs access to your photos to remove metadata and protect your privacy. All processing happens locally on your device.";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "MetadataKill saves cleaned photos back to your library. Your photos remain on your device only.";
+
+/* App Display Name */
+"CFBundleDisplayName" = "MetadataKill";

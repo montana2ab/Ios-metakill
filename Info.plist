@@ -54,9 +54,9 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>MetadataKill needs access to your photos to remove metadata and protect your privacy. All processing happens locally on your device.</string>
+	<string>NSPhotoLibraryUsageDescription</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>MetadataKill saves cleaned photos back to your library. Your photos remain on your device only.</string>
+	<string>NSPhotoLibraryAddUsageDescription</string>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>

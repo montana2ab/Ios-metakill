@@ -4,6 +4,15 @@
 
 This document summarizes the French localization and installation improvements made to MetadataKill.
 
+### Recent Updates (2025-10-14)
+- ✅ Added French translations for all major documentation files
+  - ARCHITECTURE_FR.md - Complete architecture documentation in French
+  - CONTRIBUTING_FR.md - Contributing guidelines in French
+  - PRIVACY_FR.md - Privacy policy in French
+- ✅ Enhanced README.md with bilingual sections throughout
+- ✅ Added InfoPlist.strings for English and French privacy permissions
+- ✅ Improved overall bilingual experience
+
 ## 📱 App Translation
 
 ### Localized Components
@@ -106,11 +115,37 @@ Text("results.metadata_removed".localized(count))
 - Emphasizes that this is source code, not a ready-made app
 - Links to detailed documentation
 
-#### 3. Language Section in README.md
-- Added bilingual badges
-- Added language switching instructions
-- Instructions for iOS Simulator, Physical Device, and Xcode
-- Available in both English and French
+#### 3. ARCHITECTURE_FR.md (Architecture Documentation in French)
+- **12,680 characters**
+- Complete translation of architecture guide
+- Clean Architecture principles explained in French
+- All diagrams and code examples preserved
+
+#### 4. CONTRIBUTING_FR.md (Contributing Guide in French)
+- **10,600 characters**
+- Complete contributing guidelines in French
+- Code of conduct, development setup, coding standards
+- Testing guidelines and PR process in French
+
+#### 5. PRIVACY_FR.md (Privacy Policy in French)
+- **6,212 characters**
+- Complete privacy policy translation
+- All principles and commitments in French
+- GDPR and compliance information
+
+#### 6. InfoPlist.strings (Privacy Permissions)
+- English and French versions created
+- Privacy permission strings localized
+- Photo library access descriptions in both languages
+
+#### 7. Enhanced README.md
+- Added bilingual sections throughout
+- Overview section in English and French
+- Features with French translations
+- Architecture section bilingual
+- Usage instructions in both languages
+- Privacy section with French details
+- New documentation section listing all French docs
 
 ### Updated Documents
 
