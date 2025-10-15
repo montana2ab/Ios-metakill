@@ -4,7 +4,24 @@
 
 This document summarizes the French localization and installation improvements made to MetadataKill.
 
-### Recent Updates (2025-10-14)
+### Recent Updates (2025-10-15)
+- ✅ Fixed all remaining hardcoded strings in ImageCleanerView.swift
+  - Navigation title now localized
+  - Error alerts use localized strings
+  - Result rows display localized text
+  - Placeholder views (PhotoPickerView, DocumentPickerView) fully localized
+- ✅ Added 8 new localization keys for missing strings
+  - results.space_saved_inline
+  - results.gps_removed
+  - results.processing_time
+  - results.metadata_types_removed
+  - picker.photo.title
+  - picker.photo.placeholder
+  - picker.files.title
+  - picker.files.placeholder
+- ✅ Complete translation coverage - 100% of UI strings now localized
+
+### Previous Updates (2025-10-14)
 - ✅ Added French translations for all major documentation files
   - ARCHITECTURE_FR.md - Complete architecture documentation in French
   - CONTRIBUTING_FR.md - Contributing guidelines in French
@@ -65,15 +82,18 @@ This document summarizes the French localization and installation improvements m
 ### Localization Files
 
 #### English (en.lproj/Localizable.strings)
-- 92 localized strings
+- 100 localized strings
 - Covers all UI elements
 - Includes formatting for plurals and variables
+- Added result display strings
+- Added placeholder view strings
 
 #### French (fr.lproj/Localizable.strings)
-- 92 localized strings (100% coverage)
+- 100 localized strings (100% coverage)
 - Complete French translations
 - Natural French phrasing and terminology
 - Respects French typographic conventions
+- All hardcoded strings replaced with localized versions
 
 ### Helper Extensions
 
@@ -192,10 +212,11 @@ The app automatically detects the device's language setting and displays the app
 
 | Component | English | French | Coverage |
 |-----------|---------|--------|----------|
-| UI Strings | 92 | 92 | 100% |
-| Views | 5 | 5 | 100% |
-| Domain Models | 2 | 2 | 100% |
-| Documentation | 3 | 3 | 100% |
+| UI Strings | 100 | 100 | 100% ✅ |
+| Views | 5 | 5 | 100% ✅ |
+| Domain Models | 2 | 2 | 100% ✅ |
+| Documentation | 5 | 5 | 100% ✅ |
+| InfoPlist | 3 | 3 | 100% ✅ |
 
 ## 🔍 What Users Will See
 

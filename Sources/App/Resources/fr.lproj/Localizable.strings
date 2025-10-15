@@ -82,11 +82,21 @@
 /* Results */
 "results.metadata_removed" = "%d métadonnées supprimées";
 "results.space_saved" = "%@ économisé";
+"results.space_saved_inline" = "%@ économisé";
 "results.success" = "Succès";
 "results.failed" = "Échec";
+"results.gps_removed" = "Données GPS supprimées";
+"results.processing_time" = "Temps de traitement : %.2fs";
+"results.metadata_types_removed" = "%d types de métadonnées supprimés";
 
 /* Common */
 "common.cancel" = "Annuler";
 "common.done" = "Terminé";
 "common.ok" = "OK";
 "common.error" = "Erreur";
+
+/* Placeholder Views */
+"picker.photo.title" = "Sélectionner des Photos";
+"picker.photo.placeholder" = "Sélecteur de Photos - Intégration PhotoKit Requise";
+"picker.files.title" = "Sélectionner des Fichiers";
+"picker.files.placeholder" = "Sélecteur de Documents - UIDocumentPickerViewController Requis";

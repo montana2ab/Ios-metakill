@@ -105,7 +105,7 @@ struct ImageCleanerView: View {
                 }
             }
         }
-        .navigationTitle("Clean Photos")
+        .navigationTitle("image_cleaner.title".localized)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingPhotoPicker) {
             PhotoPickerView(selectedImages: $viewModel.selectedImages)
@@ -113,8 +113,8 @@ struct ImageCleanerView: View {
         .sheet(isPresented: $showingFilePicker) {
             DocumentPickerView(selectedFiles: $viewModel.selectedImages)
         }
-        .alert("Error", isPresented: $viewModel.showingError) {
-            Button("OK", role: .cancel) { }
+        .alert("common.error".localized, isPresented: $viewModel.showingError) {
+            Button("common.ok".localized, role: .cancel) { }
         } message: {
             Text(viewModel.errorMessage)
         }
@@ -177,7 +177,7 @@ struct ResultRow: View {
             
             if result.success {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("\(result.removedMetadata.count) metadata types removed")
+                    Text("results.metadata_types_removed".localized(result.removedMetadata.count))
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
@@ -185,19 +185,19 @@ struct ResultRow: View {
                         HStack {
                             Image(systemName: "location.fill")
                                 .font(.caption2)
-                            Text("GPS data removed")
+                            Text("results.gps_removed".localized)
                                 .font(.caption2)
                         }
                         .foregroundColor(.orange)
                     }
                     
                     if let spaceSaved = result.spaceSaved, spaceSaved > 0 {
-                        Text("Saved \(ByteCountFormatter.string(fromByteCount: spaceSaved, countStyle: .file))")
+                        Text("results.space_saved_inline".localized(ByteCountFormatter.string(fromByteCount: spaceSaved, countStyle: .file)))
                             .font(.caption2)
                             .foregroundColor(.green)
                     }
                     
-                    Text("Processing time: \(String(format: "%.2f", result.processingTime))s")
+                    Text("results.processing_time".localized(result.processingTime))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
@@ -276,14 +276,14 @@ struct PhotoPickerView: View {
     
     var body: some View {
         NavigationView {
-            Text("Photo Picker - PhotoKit Integration Required")
-                .navigationTitle("Select Photos")
+            Text("picker.photo.placeholder".localized)
+                .navigationTitle("picker.photo.title".localized)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { dismiss() }
+                        Button("common.cancel".localized) { dismiss() }
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { dismiss() }
+                        Button("common.done".localized) { dismiss() }
                     }
                 }
         }
@@ -298,11 +298,11 @@ struct DocumentPickerView: View {
     
     var body: some View {
         NavigationView {
-            Text("Document Picker - UIDocumentPickerViewController Required")
-                .navigationTitle("Select Files")
+            Text("picker.files.placeholder".localized)
+                .navigationTitle("picker.files.title".localized)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { dismiss() }
+                        Button("common.cancel".localized) { dismiss() }
                     }
                 }
         }
