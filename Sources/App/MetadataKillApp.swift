@@ -9,6 +9,7 @@ struct MetadataKillApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(appState)
+                .environment(\.locale, appState.currentLocale)
         }
     }
 }
@@ -16,7 +17,12 @@ struct MetadataKillApp: App {
 /// Global app state
 @MainActor
 final class AppState: ObservableObject {
-    @Published var settings: CleaningSettings
+    @Published var settings: CleaningSettings {
+        didSet {
+            updateLocale()
+        }
+    }
+    @Published var currentLocale: Locale = .current
     
     init() {
         // Load settings from UserDefaults or use defaults
@@ -26,11 +32,23 @@ final class AppState: ObservableObject {
         } else {
             self.settings = .default
         }
+        updateLocale()
     }
     
     func saveSettings() {
         if let data = try? JSONEncoder().encode(settings) {
             UserDefaults.standard.set(data, forKey: "CleaningSettings")
+        }
+        updateLocale()
+    }
+    
+    private func updateLocale() {
+        if let languageCode = settings.appLanguage.languageCode {
+            currentLocale = Locale(identifier: languageCode)
+            UserDefaults.standard.set([languageCode], forKey: "AppleLanguages")
+        } else {
+            currentLocale = .current
+            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
         }
     }
 }

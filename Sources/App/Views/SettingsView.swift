@@ -7,6 +7,18 @@ struct SettingsView: View {
     
     var body: some View {
         Form {
+            Section(header: Text("settings.app_preferences".localized)) {
+                Picker("settings.language".localized, selection: $appState.settings.appLanguage) {
+                    ForEach(AppLanguage.allCases, id: \.self) { language in
+                        Text(language.localizationKey.localized).tag(language)
+                    }
+                }
+                
+                Text("settings.language_note".localized)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
             Section(header: Text("settings.metadata_removal".localized)) {
                 Toggle("settings.remove_gps".localized, isOn: $appState.settings.removeGPS)
                 Toggle("settings.remove_all_metadata".localized, isOn: $appState.settings.removeAllMetadata)

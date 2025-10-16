@@ -47,6 +47,9 @@
 
 /* Settings */
 "settings.title" = "Settings";
+"settings.app_preferences" = "App Preferences";
+"settings.language" = "Language";
+"settings.language_note" = "Restart the app for language changes to take full effect.";
 "settings.metadata_removal" = "Metadata Removal";
 "settings.remove_gps" = "Remove GPS Location";
 "settings.remove_all_metadata" = "Remove All Metadata";
@@ -85,6 +88,11 @@
 "video_mode.fast_copy.description" = "Fastest. Re-muxes video without re-encoding.";
 "video_mode.safe_reencode.description" = "Most thorough. Always re-encodes video.";
 "video_mode.smart_auto.description" = "Tries fast copy first, re-encodes if metadata persists.";
+
+/* Language */
+"language.system" = "System Default";
+"language.english" = "English";
+"language.french" = "Français";
 
 /* Results */
 "results.metadata_removed" = "%d metadata removed";
