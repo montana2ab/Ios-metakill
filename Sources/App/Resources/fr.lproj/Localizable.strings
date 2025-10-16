@@ -47,6 +47,9 @@
 
 /* Settings */
 "settings.title" = "Paramètres";
+"settings.app_preferences" = "Préférences de l'Application";
+"settings.language" = "Langue";
+"settings.language_note" = "Redémarrez l'application pour que les changements de langue prennent pleinement effet.";
 "settings.metadata_removal" = "Suppression des Métadonnées";
 "settings.remove_gps" = "Supprimer la Localisation GPS";
 "settings.remove_all_metadata" = "Supprimer Toutes les Métadonnées";
@@ -85,6 +88,11 @@
 "video_mode.fast_copy.description" = "Le plus rapide. Remultiplexe la vidéo sans réencoder.";
 "video_mode.safe_reencode.description" = "Le plus complet. Réencode toujours la vidéo.";
 "video_mode.smart_auto.description" = "Essaie la copie rapide d'abord, réencode si les métadonnées persistent.";
+
+/* Language */
+"language.system" = "Système par Défaut";
+"language.english" = "English";
+"language.french" = "Français";
 
 /* Results */
 "results.metadata_removed" = "%d métadonnées supprimées";

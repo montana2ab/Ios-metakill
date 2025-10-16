@@ -30,6 +30,9 @@ public struct CleaningSettings: Codable {
     // Privacy
     public var enablePrivateLogging: Bool
     
+    // App preferences
+    public var appLanguage: AppLanguage
+    
     public init(
         removeGPS: Bool = true,
         removeAllMetadata: Bool = true,
@@ -46,7 +49,8 @@ public struct CleaningSettings: Codable {
         preserveHDR: Bool = false,
         enableThermalMonitoring: Bool = true,
         maxConcurrentOperations: Int = 4,
-        enablePrivateLogging: Bool = false
+        enablePrivateLogging: Bool = false,
+        appLanguage: AppLanguage = .system
     ) {
         self.removeGPS = removeGPS
         self.removeAllMetadata = removeAllMetadata
@@ -64,6 +68,7 @@ public struct CleaningSettings: Codable {
         self.enableThermalMonitoring = enableThermalMonitoring
         self.maxConcurrentOperations = maxConcurrentOperations
         self.enablePrivateLogging = enablePrivateLogging
+        self.appLanguage = appLanguage
     }
     
     public static var `default`: CleaningSettings {
@@ -132,6 +137,37 @@ public enum VideoProcessingMode: String, Codable, CaseIterable {
             return "Most thorough. Always re-encodes video."
         case .smartAuto:
             return "Tries fast copy first, re-encodes if metadata persists."
+        }
+    }
+}
+
+/// App language preference
+public enum AppLanguage: String, Codable, CaseIterable {
+    case system // Use system language
+    case english = "en"
+    case french = "fr"
+    
+    public var localizationKey: String {
+        switch self {
+        case .system: return "language.system"
+        case .english: return "language.english"
+        case .french: return "language.french"
+        }
+    }
+    
+    public var displayName: String {
+        switch self {
+        case .system: return "System Default"
+        case .english: return "English"
+        case .french: return "Français"
+        }
+    }
+    
+    public var languageCode: String? {
+        switch self {
+        case .system: return nil
+        case .english: return "en"
+        case .french: return "fr"
         }
     }
 }
