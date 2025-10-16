@@ -15,6 +15,7 @@ struct ContentView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gear")
+                            .accessibilityLabel("settings.title".localized)
                     }
                 }
             }
@@ -27,6 +28,7 @@ struct ContentView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gear")
+                            .accessibilityLabel("settings.title".localized)
                     }
                 }
             }
