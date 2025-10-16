@@ -1,10 +1,12 @@
 import SwiftUI
 import Domain
 import Data
+import Platform
 
 struct VideoCleanerView: View {
     @EnvironmentObject private var appState: AppState
     @StateObject private var viewModel = VideoCleanerViewModel()
+    @State private var showingPhotoPicker = false
     @State private var showingFilePicker = false
     
     var body: some View {
@@ -26,13 +28,24 @@ struct VideoCleanerView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                     
-                    Button(action: { showingFilePicker = true }) {
-                        Label("video_cleaner.select_videos".localized, systemImage: "folder")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.purple)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                    VStack(spacing: 12) {
+                        Button(action: { showingPhotoPicker = true }) {
+                            Label("video_cleaner.select_from_photos".localized, systemImage: "photo.stack")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.purple)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        
+                        Button(action: { showingFilePicker = true }) {
+                            Label("video_cleaner.select_from_files".localized, systemImage: "folder")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.purple)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
                     }
                     .padding(.horizontal, 40)
                 }
@@ -94,8 +107,11 @@ struct VideoCleanerView: View {
         }
         .navigationTitle("video_cleaner.title".localized)
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingPhotoPicker) {
+            VideoLibraryPicker(selectedItems: $viewModel.selectedVideos)
+        }
         .sheet(isPresented: $showingFilePicker) {
-            DocumentPickerView(selectedFiles: $viewModel.selectedVideos)
+            VideoDocumentPicker(selectedItems: $viewModel.selectedVideos)
         }
     }
 }

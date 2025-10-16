@@ -28,6 +28,8 @@
 "video_cleaner.title" = "Nettoyeur de Vidéos";
 "video_cleaner.empty.title" = "Sélectionner des Vidéos à Nettoyer";
 "video_cleaner.empty.description" = "Choisissez des vidéos pour supprimer les métadonnées QuickTime, la localisation GPS et les chapitres";
+"video_cleaner.select_from_photos" = "Sélectionner depuis Photos";
+"video_cleaner.select_from_files" = "Sélectionner depuis Fichiers";
 "video_cleaner.select_videos" = "Sélectionner des Vidéos";
 "video_cleaner.selected_videos" = "Vidéos Sélectionnées";
 "video_cleaner.results" = "Résultats";
