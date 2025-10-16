@@ -41,6 +41,8 @@
 /* Batch Processor */
 "batch_processor.title" = "Traitement par Lot";
 "batch_processor.description" = "Sélectionnez plusieurs photos et vidéos à traiter ensemble";
+"batch_processor.select_from_photos" = "Sélectionner depuis Photos";
+"batch_processor.select_from_files" = "Sélectionner depuis Fichiers";
 "batch_processor.select_files" = "Sélectionner des Fichiers";
 
 /* Settings */

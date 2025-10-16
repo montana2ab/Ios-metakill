@@ -41,6 +41,8 @@
 /* Batch Processor */
 "batch_processor.title" = "Batch Processing";
 "batch_processor.description" = "Select multiple photos and videos to process together";
+"batch_processor.select_from_photos" = "Select from Photos";
+"batch_processor.select_from_files" = "Select from Files";
 "batch_processor.select_files" = "Select Files";
 
 /* Settings */
