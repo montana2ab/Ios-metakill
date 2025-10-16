@@ -9,6 +9,8 @@ public struct CleaningSettings: Codable {
     // File handling
     public var preserveFileDate: Bool // Keep mtime
     public var outputMode: OutputMode
+    public var saveToPhotoLibrary: Bool // Save cleaned files to camera roll
+    public var deleteOriginalFile: Bool // Delete original file after cleaning
     
     // Image options
     public var heicToJPEG: Bool
@@ -33,6 +35,8 @@ public struct CleaningSettings: Codable {
         removeAllMetadata: Bool = true,
         preserveFileDate: Bool = false,
         outputMode: OutputMode = .newCopy,
+        saveToPhotoLibrary: Bool = true,
+        deleteOriginalFile: Bool = false,
         heicToJPEG: Bool = false,
         heicQuality: Double = 0.85,
         jpegQuality: Double = 0.90,
@@ -48,6 +52,8 @@ public struct CleaningSettings: Codable {
         self.removeAllMetadata = removeAllMetadata
         self.preserveFileDate = preserveFileDate
         self.outputMode = outputMode
+        self.saveToPhotoLibrary = saveToPhotoLibrary
+        self.deleteOriginalFile = deleteOriginalFile
         self.heicToJPEG = heicToJPEG
         self.heicQuality = heicQuality
         self.jpegQuality = jpegQuality

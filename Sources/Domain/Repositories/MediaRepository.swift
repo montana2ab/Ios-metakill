@@ -27,6 +27,17 @@ public protocol StorageRepository {
         settings: CleaningSettings
     ) async throws -> URL
     
+    /// Save cleaned media to photo library
+    func saveToPhotoLibrary(
+        fileURL: URL,
+        mediaType: MediaType
+    ) async throws
+    
+    /// Delete original file
+    func deleteOriginal(
+        mediaItem: MediaItem
+    ) async throws
+    
     /// Generate output URL for cleaned file
     func generateOutputURL(
         for mediaItem: MediaItem,

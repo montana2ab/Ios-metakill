@@ -21,6 +21,16 @@ struct SettingsView: View {
                         Text(mode.localizationKey.localized).tag(mode)
                     }
                 }
+                
+                Toggle("settings.save_to_photo_library".localized, isOn: $appState.settings.saveToPhotoLibrary)
+                
+                Toggle("settings.delete_original_file".localized, isOn: $appState.settings.deleteOriginalFile)
+                
+                if appState.settings.deleteOriginalFile {
+                    Text("settings.delete_original_warning".localized)
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                }
             }
             
             Section(header: Text("settings.image_settings".localized)) {

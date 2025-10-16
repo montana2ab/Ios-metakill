@@ -53,6 +53,9 @@
 "settings.file_options" = "File Options";
 "settings.preserve_file_date" = "Preserve File Date";
 "settings.output_mode" = "Output Mode";
+"settings.save_to_photo_library" = "Save to Camera Roll";
+"settings.delete_original_file" = "Delete Original File";
+"settings.delete_original_warning" = "Warning: This will permanently delete the original file after cleaning";
 "settings.image_settings" = "Image Settings";
 "settings.convert_heic_to_jpeg" = "Convert HEIC to JPEG";
 "settings.heic_quality" = "HEIC Quality";

@@ -11,6 +11,8 @@ final class CleaningSettingsTests: XCTestCase {
         XCTAssertFalse(settings.preserveFileDate)
         XCTAssertEqual(settings.outputMode, .newCopy)
         XCTAssertTrue(settings.bakeOrientation)
+        XCTAssertTrue(settings.saveToPhotoLibrary)
+        XCTAssertFalse(settings.deleteOriginalFile)
     }
     
     func testSettingsEncoding() throws {
