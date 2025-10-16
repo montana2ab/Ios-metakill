@@ -94,6 +94,19 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                 )
             }
             
+            // Save to photo library if enabled
+            if settings.saveToPhotoLibrary {
+                try await storage.saveToPhotoLibrary(
+                    fileURL: outputURL,
+                    mediaType: .video
+                )
+            }
+            
+            // Delete original file if enabled
+            if settings.deleteOriginalFile {
+                try await storage.deleteOriginal(mediaItem: mediaItem)
+            }
+            
             let processingTime = Date().timeIntervalSince(startTime)
             let outputSize = try self.fileSize(at: outputURL)
             

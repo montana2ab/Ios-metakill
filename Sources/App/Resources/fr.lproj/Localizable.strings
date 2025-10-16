@@ -53,6 +53,9 @@
 "settings.file_options" = "Options de Fichier";
 "settings.preserve_file_date" = "Conserver la Date du Fichier";
 "settings.output_mode" = "Mode de Sortie";
+"settings.save_to_photo_library" = "Sauvegarder dans la Pellicule";
+"settings.delete_original_file" = "Supprimer le Fichier Original";
+"settings.delete_original_warning" = "Attention : Cela supprimera définitivement le fichier original après nettoyage";
 "settings.image_settings" = "Paramètres d'Image";
 "settings.convert_heic_to_jpeg" = "Convertir HEIC en JPEG";
 "settings.heic_quality" = "Qualité HEIC";

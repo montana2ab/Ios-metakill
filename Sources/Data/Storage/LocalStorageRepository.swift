@@ -1,5 +1,6 @@
 import Foundation
 import Domain
+import Photos
 
 /// Implementation of storage repository for local file system
 public final class LocalStorageRepository: StorageRepository {
@@ -135,5 +136,43 @@ public final class LocalStorageRepository: StorageRepository {
         }
         
         return outputURL
+    }
+    
+    public func saveToPhotoLibrary(
+        fileURL: URL,
+        mediaType: MediaType
+    ) async throws {
+        // Request authorization first
+        let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+        
+        guard status == .authorized || status == .limited else {
+            throw CleaningError.permissionDenied
+        }
+        
+        // Perform the save operation
+        try await PHPhotoLibrary.shared().performChanges {
+            switch mediaType {
+            case .image:
+                PHAssetCreationRequest.creationRequestForAssetFromImage(atFileURL: fileURL)
+            case .video:
+                PHAssetCreationRequest.creationRequestForAssetFromVideo(atFileURL: fileURL)
+            default:
+                break
+            }
+        }
+    }
+    
+    public func deleteOriginal(
+        mediaItem: MediaItem
+    ) async throws {
+        let fileURL = mediaItem.sourceURL
+        
+        // Only delete files in writable locations (not from photo library)
+        if isWritableLocation(fileURL) {
+            try fileManager.removeItem(at: fileURL)
+        }
+        // If the file is from the photo library, we should delete it from there
+        // This requires the PHAsset identifier which we don't currently track
+        // For now, we'll only delete files from file system locations
     }
 }

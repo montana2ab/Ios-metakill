@@ -49,6 +49,19 @@ public final class CleanImageUseCaseImpl: CleanImageUseCase {
                 settings: settings
             )
             
+            // Save to photo library if enabled
+            if settings.saveToPhotoLibrary {
+                try await storage.saveToPhotoLibrary(
+                    fileURL: outputURL,
+                    mediaType: .image
+                )
+            }
+            
+            // Delete original file if enabled
+            if settings.deleteOriginalFile {
+                try await storage.deleteOriginal(mediaItem: mediaItem)
+            }
+            
             // Preserve file date if requested
             if settings.preserveFileDate,
                let modificationDate = try? FileManager.default.attributesOfItem(atPath: imageURL.path)[.modificationDate] as? Date {
