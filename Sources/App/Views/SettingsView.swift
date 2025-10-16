@@ -5,6 +5,8 @@ import Domain
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
     @State private var showRestartAlert = false
+    @State private var showDeleteOriginalConfirm = false
+    @State private var pendingEnableDeleteOriginal = false
     
     var body: some View {
         Form {
@@ -40,13 +42,38 @@ struct SettingsView: View {
                 
                 Toggle("settings.save_to_photo_library".localized, isOn: $appState.settings.saveToPhotoLibrary)
                 
-                Toggle("settings.delete_original_file".localized, isOn: $appState.settings.deleteOriginalFile)
+                Toggle("settings.delete_original_file".localized, isOn: Binding(
+                    get: { appState.settings.deleteOriginalFile },
+                    set: { newValue in
+                        if newValue {
+                            // Ask for confirmation before committing the change
+                            pendingEnableDeleteOriginal = true
+                            showDeleteOriginalConfirm = true
+                        } else {
+                            appState.settings.deleteOriginalFile = false
+                        }
+                    }
+                ))
                 
                 if appState.settings.deleteOriginalFile {
                     Text("settings.delete_original_warning".localized)
                         .font(.caption)
                         .foregroundColor(.orange)
                 }
+            }
+            .alert("settings.delete_original_confirm_title".localized, isPresented: $showDeleteOriginalConfirm) {
+                Button("settings.cancel".localized, role: .cancel) {
+                    pendingEnableDeleteOriginal = false
+                    appState.settings.deleteOriginalFile = false
+                }
+                Button("settings.confirm".localized, role: .destructive) {
+                    if pendingEnableDeleteOriginal {
+                        appState.settings.deleteOriginalFile = true
+                    }
+                    pendingEnableDeleteOriginal = false
+                }
+            } message: {
+                Text("settings.delete_original_confirm_message".localized)
             }
             
             Section(header: Text("settings.image_settings".localized)) {

@@ -3,6 +3,15 @@ import AVFoundation
 import CoreMedia
 import Domain
 
+/// Represents an in-flight cleaning operation that can be awaited later
+public struct CleaningTask {
+    public let detectedMetadata: [MetadataInfo]
+    public let outputURL: URL
+    public let task: Task<Void, Error>
+    public let progress: AsyncStream<Double>
+    public let metadataUpdates: AsyncStream<[MetadataInfo]>
+}
+
 /// Core implementation for removing metadata from video files
 public final class VideoMetadataCleaner {
     
@@ -31,6 +40,15 @@ public final class VideoMetadataCleaner {
         exportSession.outputURL = outputURL
         exportSession.outputFileType = determineOutputFileType(from: sourceURL)
         
+        // Remove existing output file if present
+        try? FileManager.default.removeItem(at: outputURL)
+        
+        // Optimize and filter metadata for sharing
+        exportSession.shouldOptimizeForNetworkUse = true
+        if #available(iOS 16.0, *) {
+            exportSession.metadataItemFilter = .forSharing()
+        }
+        
         // Remove metadata by not including it in export
         exportSession.metadata = [] // Empty metadata
         
@@ -46,6 +64,83 @@ public final class VideoMetadataCleaner {
         return detectedMetadata
     }
     
+    /// Start a fast clean (re-mux) asynchronously and return immediately with a task you can await later.
+    /// This reduces UI latency between selection and the next screen.
+    public func cleanVideoFastAsync(
+        from sourceURL: URL,
+        outputURL: URL,
+        settings: CleaningSettings
+    ) async throws -> CleaningTask {
+        let asset = AVURLAsset(url: sourceURL)
+
+        // Setup metadata updates stream to avoid blocking UI
+        var metadataContinuation: AsyncStream<[MetadataInfo]>.Continuation!
+        let metadataStream = AsyncStream<[MetadataInfo]> { continuation in
+            metadataContinuation = continuation
+        }
+
+        // Prepare export session
+        guard let exportSession = AVAssetExportSession(
+            asset: asset,
+            presetName: AVAssetExportPresetPassthrough
+        ) else {
+            throw CleaningError.processingFailed("Cannot create export session")
+        }
+
+        exportSession.outputURL = outputURL
+        exportSession.outputFileType = determineOutputFileType(from: sourceURL)
+
+        // Remove existing output file if present
+        try? FileManager.default.removeItem(at: outputURL)
+
+        // Optimize and filter metadata for sharing
+        exportSession.shouldOptimizeForNetworkUse = true
+        if #available(iOS 16.0, *) {
+            exportSession.metadataItemFilter = .forSharing()
+        }
+
+        // Remove metadata by not including it in export
+        exportSession.metadata = []
+
+        let progressStream = AsyncStream<Double> { continuation in
+            Task {
+                while exportSession.status == .waiting || exportSession.status == .exporting {
+                    continuation.yield(Double(exportSession.progress))
+                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+                }
+                // Yield final state
+                if exportSession.status == .completed {
+                    continuation.yield(1.0)
+                }
+                continuation.finish()
+            }
+        }
+
+        // Detect metadata in background without blocking return
+        Task.detached { [weak self] in
+            guard let self = self else { return }
+            do {
+                let md = try await self.detectMetadata(in: asset)
+                metadataContinuation.yield(md)
+                metadataContinuation.finish()
+            } catch {
+                metadataContinuation.finish()
+            }
+        }
+
+        // Kick off export in the background and return immediately
+        let task = Task<Void, Error> {
+            await exportSession.export()
+            if let error = exportSession.error {
+                throw CleaningError.processingFailed("Export failed: \(error.localizedDescription)")
+            }
+            // Verify the output once export completes
+            try await self.verifyCleanVideo(at: outputURL, originalAsset: asset)
+        }
+
+        return CleaningTask(detectedMetadata: [], outputURL: outputURL, task: task, progress: progressStream, metadataUpdates: metadataStream)
+    }
+    
     /// Clean video with re-encoding (most thorough)
     public func cleanVideoReencode(
         from sourceURL: URL,
@@ -57,6 +152,11 @@ public final class VideoMetadataCleaner {
         
         // Detect metadata
         let detectedMetadata = try await detectMetadata(in: asset)
+        
+        // Remove existing output file if present
+        if FileManager.default.fileExists(atPath: outputURL.path) {
+            try FileManager.default.removeItem(at: outputURL)
+        }
         
         // Set up reader and writer for re-encoding
         let reader = try AVAssetReader(asset: asset)
@@ -92,7 +192,7 @@ public final class VideoMetadataCleaner {
             if let videoOutput = reader.outputs.first(where: { $0.mediaType == .video }) as? AVAssetReaderTrackOutput,
                let videoInput = writer.inputs.first(where: { $0.mediaType == .video }) {
                 group.addTask {
-                    await self.copyTrackSamples(from: videoOutput, to: videoInput)
+                    await self.copyTrackSamples(from: videoOutput, to: videoInput, reader: reader)
                 }
             }
             
@@ -100,18 +200,119 @@ public final class VideoMetadataCleaner {
             if let audioOutput = reader.outputs.first(where: { $0.mediaType == .audio }) as? AVAssetReaderTrackOutput,
                let audioInput = writer.inputs.first(where: { $0.mediaType == .audio }) {
                 group.addTask {
-                    await self.copyTrackSamples(from: audioOutput, to: audioInput)
+                    await self.copyTrackSamples(from: audioOutput, to: audioInput, reader: reader)
                 }
             }
         }
         
         await writer.finishWriting()
         
-        if let error = writer.error {
-            throw CleaningError.processingFailed("Writing failed: \(error.localizedDescription)")
+        if writer.status != .completed {
+            if let error = writer.error {
+                throw CleaningError.processingFailed("Writing failed: \(error.localizedDescription)")
+            } else {
+                throw CleaningError.processingFailed("Writing failed with status: \(writer.status)")
+            }
         }
         
         return detectedMetadata
+    }
+    
+    /// Start a thorough clean (re-encode) asynchronously and return immediately with a task you can await later.
+    /// This reduces UI latency between selection and the next screen.
+    public func cleanVideoReencodeAsync(
+        from sourceURL: URL,
+        outputURL: URL,
+        settings: CleaningSettings
+    ) async throws -> CleaningTask {
+        let asset = AVURLAsset(url: sourceURL)
+
+        // Setup metadata updates stream to avoid blocking UI
+        var metadataContinuation: AsyncStream<[MetadataInfo]>.Continuation!
+        let metadataStream = AsyncStream<[MetadataInfo]> { continuation in
+            metadataContinuation = continuation
+        }
+
+        // Setup progress stream now; we'll compute duration inside the task
+        var progressContinuation: AsyncStream<Double>.Continuation!
+        let progressStream = AsyncStream<Double> { continuation in
+            progressContinuation = continuation
+        }
+
+        // Detect metadata in background without blocking return
+        Task.detached { [weak self] in
+            guard let self = self else { return }
+            do {
+                let md = try await self.detectMetadata(in: asset)
+                metadataContinuation.yield(md)
+                metadataContinuation.finish()
+            } catch {
+                metadataContinuation.finish()
+            }
+        }
+
+        // Create a background task to perform the heavy lifting and return immediately
+        let task = Task<Void, Error> {
+            // Create reader/writer and configure inside the task to avoid pre-return awaits
+            let reader = try AVAssetReader(asset: asset)
+            let writer = try AVAssetWriter(outputURL: outputURL, fileType: .mp4)
+
+            if let videoTrack = try await asset.loadTracks(withMediaType: .video).first {
+                try await self.configureVideoTrack(
+                    videoTrack: videoTrack,
+                    reader: reader,
+                    writer: writer,
+                    settings: settings
+                )
+            }
+            if let audioTrack = try await asset.loadTracks(withMediaType: .audio).first {
+                try await self.configureAudioTrack(
+                    audioTrack: audioTrack,
+                    reader: reader,
+                    writer: writer
+                )
+            }
+
+            let assetDuration = try await asset.load(.duration)
+            let totalSeconds = max(CMTimeGetSeconds(assetDuration), 0.001)
+
+            reader.startReading()
+            writer.startWriting()
+            writer.startSession(atSourceTime: .zero)
+
+            await withTaskGroup(of: Void.self) { group in
+                if let videoOutput = reader.outputs.first(where: { $0.mediaType == .video }) as? AVAssetReaderTrackOutput,
+                   let videoInput = writer.inputs.first(where: { $0.mediaType == .video }) {
+                    group.addTask {
+                        await self.copyTrackSamples(from: videoOutput, to: videoInput, reader: reader, isVideo: true) { pts in
+                            let current = CMTimeGetSeconds(pts)
+                            let ratio = max(0.0, min(current / totalSeconds, 0.99))
+                            progressContinuation.yield(ratio)
+                        }
+                    }
+                }
+                if let audioOutput = reader.outputs.first(where: { $0.mediaType == .audio }) as? AVAssetReaderTrackOutput,
+                   let audioInput = writer.inputs.first(where: { $0.mediaType == .audio }) {
+                    group.addTask {
+                        await self.copyTrackSamples(from: audioOutput, to: audioInput, reader: reader)
+                    }
+                }
+            }
+
+            await writer.finishWriting()
+
+            if writer.status != .completed {
+                if let error = writer.error {
+                    throw CleaningError.processingFailed("Writing failed: \(error.localizedDescription)")
+                } else {
+                    throw CleaningError.processingFailed("Writing failed with status: \(writer.status)")
+                }
+            }
+            progressContinuation.yield(1.0)
+            progressContinuation.finish()
+        }
+
+        return CleaningTask(detectedMetadata: [], outputURL: outputURL, task: task, progress: progressStream, metadataUpdates: metadataStream)
     }
     
     // MARK: - Private Methods
@@ -180,6 +381,18 @@ public final class VideoMetadataCleaner {
             }
         }
         
+        let formats = try await asset.load(.availableMetadataFormats)
+        for format in formats {
+            let items = try await asset.loadMetadata(for: format)
+            if !items.isEmpty {
+                detectedMetadata.append(MetadataInfo(
+                    type: .videoMetadata,
+                    detected: true,
+                    fieldCount: items.count
+                ))
+            }
+        }
+        
         return detectedMetadata
     }
     
@@ -209,6 +422,9 @@ public final class VideoMetadataCleaner {
         ]
         
         let videoOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: outputSettings)
+        guard reader.canAdd(videoOutput) else {
+            throw CleaningError.processingFailed("Cannot add video reader output")
+        }
         reader.add(videoOutput)
         
         // Determine video codec
@@ -225,8 +441,10 @@ public final class VideoMetadataCleaner {
         
         // Video input settings
         let naturalSize = try await videoTrack.load(.naturalSize)
+        let estimatedDataRate = try await videoTrack.load(.estimatedDataRate) // bits per second
+        let targetBitrate = max(2_000_000, min(Int(estimatedDataRate), 12_000_000))
         var compressionProperties: [String: Any] = [
-            AVVideoAverageBitRateKey: 8_000_000, // 8 Mbps
+            AVVideoAverageBitRateKey: targetBitrate,
             AVVideoExpectedSourceFrameRateKey: 30
         ]
         
@@ -235,15 +453,42 @@ public final class VideoMetadataCleaner {
             compressionProperties[AVVideoProfileLevelKey] = AVVideoProfileLevelH264MainAutoLevel
         }
         
-        let videoInputSettings: [String: Any] = [
+        var videoInputSettings: [String: Any] = [
             AVVideoCodecKey: codec,
             AVVideoWidthKey: naturalSize.width,
             AVVideoHeightKey: naturalSize.height,
             AVVideoCompressionPropertiesKey: compressionProperties
         ]
         
+        // Preserve color properties (HDR/SDR) when available
+        if #available(iOS 16.0, *) {
+            let formatDescriptions = try await videoTrack.load(.formatDescriptions)
+            if let first = formatDescriptions.first {
+                let formatDesc = first as! CMFormatDescription
+                var colorProps: [String: Any] = [:]
+                if let primaries = CMFormatDescriptionGetExtension(formatDesc, extensionKey: kCMFormatDescriptionExtension_ColorPrimaries) {
+                    colorProps[AVVideoColorPrimariesKey] = primaries
+                }
+                if let ycbcr = CMFormatDescriptionGetExtension(formatDesc, extensionKey: kCMFormatDescriptionExtension_YCbCrMatrix) {
+                    colorProps[AVVideoYCbCrMatrixKey] = ycbcr
+                }
+                if let transfer = CMFormatDescriptionGetExtension(formatDesc, extensionKey: kCMFormatDescriptionExtension_TransferFunction) {
+                    colorProps[AVVideoTransferFunctionKey] = transfer
+                }
+                if !colorProps.isEmpty {
+                    videoInputSettings[AVVideoColorPropertiesKey] = colorProps
+                }
+            }
+        }
+        
         let videoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoInputSettings)
+        let preferredTransform = try await videoTrack.load(.preferredTransform)
+        videoInput.transform = preferredTransform
         videoInput.expectsMediaDataInRealTime = false
+        
+        guard writer.canAdd(videoInput) else {
+            throw CleaningError.processingFailed("Cannot add video writer input")
+        }
         writer.add(videoInput)
     }
     
@@ -253,37 +498,74 @@ public final class VideoMetadataCleaner {
         writer: AVAssetWriter
     ) async throws {
         
-        // Audio output settings - decompress
-        let audioOutput = AVAssetReaderTrackOutput(track: audioTrack, outputSettings: nil)
+        // Audio reader output settings - decode to uncompressed LPCM
+        let audioReaderOutputSettings: [String: Any] = [
+            AVFormatIDKey: kAudioFormatLinearPCM,
+            AVLinearPCMIsNonInterleaved as String: false,
+            AVLinearPCMBitDepthKey as String: 16,
+            AVLinearPCMIsFloatKey as String: false,
+            AVLinearPCMIsBigEndianKey as String: false
+        ]
+        
+        let audioOutput = AVAssetReaderTrackOutput(track: audioTrack, outputSettings: audioReaderOutputSettings)
+        guard reader.canAdd(audioOutput) else {
+            throw CleaningError.processingFailed("Cannot add audio reader output")
+        }
         reader.add(audioOutput)
         
-        // Audio input settings - AAC
+        // Audio writer input settings - AAC (encode) derived from source when possible
+        let formatDescriptions = try await audioTrack.load(.formatDescriptions)
+        let asbd: AudioStreamBasicDescription? = {
+            guard let first = formatDescriptions.first else { return nil }
+            let audioFormatDesc = first as! CMAudioFormatDescription
+            return CMAudioFormatDescriptionGetStreamBasicDescription(audioFormatDesc)?.pointee
+        }()
+        
+        let sampleRate = asbd?.mSampleRate ?? 44100
+        let channels = Int(asbd?.mChannelsPerFrame ?? 2)
+        
         let audioInputSettings: [String: Any] = [
             AVFormatIDKey: kAudioFormatMPEG4AAC,
-            AVSampleRateKey: 44100,
-            AVNumberOfChannelsKey: 2,
-            AVEncoderBitRateKey: 128000
+            AVSampleRateKey: sampleRate,
+            AVNumberOfChannelsKey: channels,
+            AVEncoderBitRateKey: 128_000
         ]
         
         let audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioInputSettings)
         audioInput.expectsMediaDataInRealTime = false
+        guard writer.canAdd(audioInput) else {
+            throw CleaningError.processingFailed("Cannot add audio writer input")
+        }
         writer.add(audioInput)
     }
     
-    private func copyTrackSamples(from output: AVAssetReaderTrackOutput, to input: AVAssetWriterInput) async {
+    private func copyTrackSamples(from output: AVAssetReaderTrackOutput, to input: AVAssetWriterInput, reader: AVAssetReader, isVideo: Bool = false, onProgress: ((CMTime) -> Void)? = nil) async {
         await withCheckedContinuation { continuation in
             input.requestMediaDataWhenReady(on: DispatchQueue(label: "video.processing")) {
                 while input.isReadyForMoreMediaData {
+                    // Stop if reader is no longer reading
+                    let status = reader.status
+                    if status == .failed || status == .cancelled {
+                        input.markAsFinished()
+                        continuation.resume()
+                        return
+                    }
+
                     guard let sampleBuffer = output.copyNextSampleBuffer() else {
                         input.markAsFinished()
                         continuation.resume()
                         return
                     }
-                    
+
                     if !input.append(sampleBuffer) {
                         input.markAsFinished()
                         continuation.resume()
                         return
+                    }
+                    
+                    if isVideo {
+                        let pts = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+                        onProgress?(pts)
                     }
                 }
             }
@@ -317,6 +599,34 @@ public final class VideoMetadataCleaner {
         
         if hasSensitiveMetadata {
             throw CleaningError.processingFailed("Sensitive metadata still present after cleaning")
+        }
+        
+        // Inspect all metadata formats for sensitive items
+        let allFormats = try await cleanAsset.load(.availableMetadataFormats)
+        for format in allFormats {
+            let items = try await cleanAsset.loadMetadata(for: format)
+            let hasSensitive = items.contains { item in
+                (item.key as? String) == AVMetadataKey.quickTimeMetadataKeyLocationISO6709.rawValue ||
+                (item.key as? String) == AVMetadataKey.commonKeyLocation.rawValue
+            }
+            if hasSensitive {
+                throw CleaningError.processingFailed("Sensitive metadata still present after cleaning")
+            }
+        }
+        
+        // Optionally, inspect track-level metadata
+        let videoTracksForCheck = try await cleanAsset.loadTracks(withMediaType: .video)
+        let audioTracksForCheck = try await cleanAsset.loadTracks(withMediaType: .audio)
+        let allTracks = videoTracksForCheck + audioTracksForCheck
+        for track in allTracks {
+            let trackMetadata = try await track.load(.metadata)
+            let hasSensitiveTrackMetadata = trackMetadata.contains { item in
+                (item.key as? String) == AVMetadataKey.quickTimeMetadataKeyLocationISO6709.rawValue ||
+                (item.key as? String) == AVMetadataKey.commonKeyLocation.rawValue
+            }
+            if hasSensitiveTrackMetadata {
+                throw CleaningError.processingFailed("Sensitive track metadata still present after cleaning")
+            }
         }
     }
 }
