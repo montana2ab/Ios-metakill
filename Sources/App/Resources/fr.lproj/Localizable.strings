@@ -114,6 +114,8 @@
 "common.done" = "Terminé";
 "common.ok" = "OK";
 "common.error" = "Erreur";
+"common.image" = "Image";
+"common.video" = "Vidéo";
 
 /* Placeholder Views */
 "picker.photo.title" = "Sélectionner des Photos";

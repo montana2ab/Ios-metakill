@@ -150,7 +150,7 @@ struct BatchItemRow: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
-                    Text(item.type == .image ? "Image" : "Video")
+                    Text(item.type == .image ? "common.image".localized : "common.video".localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
