@@ -28,6 +28,8 @@
 "video_cleaner.title" = "Nettoyeur de Vidéos";
 "video_cleaner.empty.title" = "Sélectionner des Vidéos à Nettoyer";
 "video_cleaner.empty.description" = "Choisissez des vidéos pour supprimer les métadonnées QuickTime, la localisation GPS et les chapitres";
+"video_cleaner.select_from_photos" = "Sélectionner depuis Photos";
+"video_cleaner.select_from_files" = "Sélectionner depuis Fichiers";
 "video_cleaner.select_videos" = "Sélectionner des Vidéos";
 "video_cleaner.selected_videos" = "Vidéos Sélectionnées";
 "video_cleaner.results" = "Résultats";
@@ -39,6 +41,8 @@
 /* Batch Processor */
 "batch_processor.title" = "Traitement par Lot";
 "batch_processor.description" = "Sélectionnez plusieurs photos et vidéos à traiter ensemble";
+"batch_processor.select_from_photos" = "Sélectionner depuis Photos";
+"batch_processor.select_from_files" = "Sélectionner depuis Fichiers";
 "batch_processor.select_files" = "Sélectionner des Fichiers";
 
 /* Settings */

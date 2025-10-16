@@ -2,6 +2,7 @@ import SwiftUI
 import PhotosUI
 import Domain
 import Data
+import Platform
 
 struct ImageCleanerView: View {
     @EnvironmentObject private var appState: AppState
@@ -108,10 +109,10 @@ struct ImageCleanerView: View {
         .navigationTitle("image_cleaner.title".localized)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingPhotoPicker) {
-            PhotoPickerView(selectedImages: $viewModel.selectedImages)
+            PhotoLibraryPicker(selectedItems: $viewModel.selectedImages)
         }
         .sheet(isPresented: $showingFilePicker) {
-            DocumentPickerView(selectedFiles: $viewModel.selectedImages)
+            ImageDocumentPicker(selectedItems: $viewModel.selectedImages)
         }
         .alert("common.error".localized, isPresented: $viewModel.showingError) {
             Button("common.ok".localized, role: .cancel) { }
@@ -268,46 +269,7 @@ final class ImageCleanerViewModel: ObservableObject {
     }
 }
 
-// MARK: - Photo Picker (Placeholder)
 
-struct PhotoPickerView: View {
-    @Binding var selectedImages: [MediaItem]
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            Text("picker.photo.placeholder".localized)
-                .navigationTitle("picker.photo.title".localized)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("common.cancel".localized) { dismiss() }
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("common.done".localized) { dismiss() }
-                    }
-                }
-        }
-    }
-}
-
-// MARK: - Document Picker (Placeholder)
-
-struct DocumentPickerView: View {
-    @Binding var selectedFiles: [MediaItem]
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            Text("picker.files.placeholder".localized)
-                .navigationTitle("picker.files.title".localized)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("common.cancel".localized) { dismiss() }
-                    }
-                }
-        }
-    }
-}
 
 #Preview {
     if #available(iOS 16.0, *) {

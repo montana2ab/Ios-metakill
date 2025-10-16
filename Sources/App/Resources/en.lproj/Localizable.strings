@@ -28,6 +28,8 @@
 "video_cleaner.title" = "Video Cleaner";
 "video_cleaner.empty.title" = "Select Videos to Clean";
 "video_cleaner.empty.description" = "Choose videos to remove QuickTime metadata, GPS location, and chapters";
+"video_cleaner.select_from_photos" = "Select from Photos";
+"video_cleaner.select_from_files" = "Select from Files";
 "video_cleaner.select_videos" = "Select Videos";
 "video_cleaner.selected_videos" = "Selected Videos";
 "video_cleaner.results" = "Results";
@@ -39,6 +41,8 @@
 /* Batch Processor */
 "batch_processor.title" = "Batch Processing";
 "batch_processor.description" = "Select multiple photos and videos to process together";
+"batch_processor.select_from_photos" = "Select from Photos";
+"batch_processor.select_from_files" = "Select from Files";
 "batch_processor.select_files" = "Select Files";
 
 /* Settings */

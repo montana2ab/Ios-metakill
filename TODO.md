@@ -10,18 +10,22 @@ This document tracks pending tasks for MetadataKill development.
   - Build settings configured
   - Ready for signing certificates (requires developer account)
   
-- [ ] **Implement PhotoKit Integration**
+- [x] **Implement PhotoKit Integration** ✅ (COMPLETE - 2025-10-16)
   - PHPickerViewController for photo selection
-  - PHAsset management
-  - Live Photo detection and pairing
-  - iCloud download progress handling
-  - Limited photo library access support
+  - PhotoLibraryPicker, VideoLibraryPicker, MediaLibraryPicker implemented
+  - Live Photo detection implemented
+  - Multiple selection support
+  - Automatic file handling and temp storage
+  - iCloud download handled automatically by PHPicker
+  - See PHOTOKIT_INTEGRATION.md for details
   
-- [ ] **Implement File Picker Integration**
+- [x] **Implement File Picker Integration** ✅ (COMPLETE - 2025-10-16)
   - UIDocumentPickerViewController wrapper
-  - File coordination for safe access
+  - ImageDocumentPicker, VideoDocumentPicker, MediaDocumentPicker implemented
+  - Security-scoped resource handling
   - Support for .jpg, .heic, .png, .mp4, .mov files
-  - Drag & drop on iPad
+  - Multiple file selection enabled
+  - See PHOTOKIT_INTEGRATION.md for details
   
 - [ ] **Build and Test on Real Devices**
   - Test on iPhone (iOS 15, 16, 17, 18)
@@ -268,6 +272,18 @@ This document tracks pending tasks for MetadataKill development.
 - [x] Changelog
 - [x] Quick start guide
 - [x] Xcode setup guide
+
+### Platform Integration (2025-10-16)
+- [x] PhotoKit integration with PHPickerViewController
+- [x] UIDocumentPicker integration for file selection
+- [x] Photo library pickers (images, videos, mixed media)
+- [x] Document pickers (images, videos, mixed media)
+- [x] Security-scoped resource handling
+- [x] Live Photo detection
+- [x] Multiple file selection support
+- [x] Localization for new picker UI (EN/FR)
+- [x] BatchProcessorView implementation
+- [x] PHOTOKIT_INTEGRATION.md documentation
 
 ## Future Ideas 💡
 
