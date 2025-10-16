@@ -9,29 +9,30 @@ struct ContentView: View {
         if #available(iOS 16.0, *) {
             NavigationStack {
                 homeContent
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: SettingsView()) {
-                        Image(systemName: "gear")
-                            .accessibilityLabel("settings.title".localized)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            NavigationLink(destination: SettingsView()) {
+                                Image(systemName: "gear")
+                                    .accessibilityLabel("settings.title".localized)
+                            }
+                        }
                     }
-                }
             }
         } else {
             NavigationView {
                 homeContent
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: SettingsView()) {
-                        Image(systemName: "gear")
-                            .accessibilityLabel("settings.title".localized)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            NavigationLink(destination: SettingsView()) {
+                                Image(systemName: "gear")
+                                    .accessibilityLabel("settings.title".localized)
+                            }
+                        }
                     }
-                }
             }
+            .navigationViewStyle(.stack)
         }
     }
     

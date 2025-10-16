@@ -1,0 +1,117 @@
+/* App Title */
+"app.title" = "MetadataKill";
+"app.subtitle" = "Nettoyer les métadonnées des photos et vidéos";
+
+/* Home Screen */
+"home.clean_photos" = "Nettoyer les Photos";
+"home.clean_photos.subtitle" = "Supprimer EXIF, GPS et autres métadonnées";
+"home.clean_videos" = "Nettoyer les Vidéos";
+"home.clean_videos.subtitle" = "Supprimer les métadonnées QuickTime et la localisation";
+"home.batch_processing" = "Traitement par Lot";
+"home.batch_processing.subtitle" = "Traiter plusieurs fichiers à la fois";
+"home.recent" = "Récents";
+
+/* Image Cleaner */
+"image_cleaner.title" = "Nettoyeur d'Images";
+"image_cleaner.empty.title" = "Sélectionner des Photos à Nettoyer";
+"image_cleaner.empty.description" = "Choisissez des photos depuis votre bibliothèque ou vos fichiers pour supprimer toutes les métadonnées";
+"image_cleaner.select_from_photos" = "Sélectionner depuis Photos";
+"image_cleaner.select_from_files" = "Sélectionner depuis Fichiers";
+"image_cleaner.selected_photos" = "Photos Sélectionnées";
+"image_cleaner.results" = "Résultats";
+"image_cleaner.clean_button" = "Nettoyer %d Photo";
+"image_cleaner.clean_button_plural" = "Nettoyer %d Photos";
+"image_cleaner.processing" = "Traitement %d/%d";
+"image_cleaner.cancel" = "Annuler";
+
+/* Video Cleaner */
+"video_cleaner.title" = "Nettoyeur de Vidéos";
+"video_cleaner.empty.title" = "Sélectionner des Vidéos à Nettoyer";
+"video_cleaner.empty.description" = "Choisissez des vidéos pour supprimer les métadonnées QuickTime, la localisation GPS et les chapitres";
+"video_cleaner.select_from_photos" = "Sélectionner depuis Photos";
+"video_cleaner.select_from_files" = "Sélectionner depuis Fichiers";
+"video_cleaner.select_videos" = "Sélectionner des Vidéos";
+"video_cleaner.selected_videos" = "Vidéos Sélectionnées";
+"video_cleaner.results" = "Résultats";
+"video_cleaner.clean_button" = "Nettoyer %d Vidéo";
+"video_cleaner.clean_button_plural" = "Nettoyer %d Vidéos";
+"video_cleaner.processing" = "Traitement %d/%d";
+"video_cleaner.cancel" = "Annuler";
+
+/* Batch Processor */
+"batch_processor.title" = "Traitement par Lot";
+"batch_processor.description" = "Sélectionnez plusieurs photos et vidéos à traiter ensemble";
+"batch_processor.select_from_photos" = "Sélectionner depuis Photos";
+"batch_processor.select_from_files" = "Sélectionner depuis Fichiers";
+"batch_processor.select_files" = "Sélectionner des Fichiers";
+
+/* Settings */
+"settings.title" = "Paramètres";
+"settings.app_preferences" = "Préférences de l'Application";
+"settings.language" = "Langue";
+"settings.language_note" = "Redémarrez l'application pour que les changements de langue prennent pleinement effet.";
+"settings.metadata_removal" = "Suppression des Métadonnées";
+"settings.remove_gps" = "Supprimer la Localisation GPS";
+"settings.remove_all_metadata" = "Supprimer Toutes les Métadonnées";
+"settings.file_options" = "Options de Fichier";
+"settings.preserve_file_date" = "Conserver la Date du Fichier";
+"settings.output_mode" = "Mode de Sortie";
+"settings.save_to_photo_library" = "Sauvegarder dans la Pellicule";
+"settings.delete_original_file" = "Supprimer le Fichier Original";
+"settings.delete_original_warning" = "Attention : Cela supprimera définitivement le fichier original après nettoyage";
+"settings.image_settings" = "Paramètres d'Image";
+"settings.convert_heic_to_jpeg" = "Convertir HEIC en JPEG";
+"settings.heic_quality" = "Qualité HEIC";
+"settings.jpeg_quality" = "Qualité JPEG";
+"settings.force_srgb" = "Forcer la Couleur sRGB";
+"settings.bake_orientation" = "Fixer l'Orientation";
+"settings.video_settings" = "Paramètres Vidéo";
+"settings.processing_mode" = "Mode de Traitement";
+"settings.preserve_hdr" = "Conserver le HDR";
+"settings.performance" = "Performance";
+"settings.thermal_monitoring" = "Surveillance Thermique";
+"settings.concurrent_operations" = "Opérations Simultanées : %d";
+"settings.privacy" = "Confidentialité";
+"settings.enable_logging" = "Activer la Journalisation";
+"settings.privacy_note" = "Tout le traitement se fait sur l'appareil. Aucune donnée n'est collectée ou partagée.";
+"settings.reset_defaults" = "Réinitialiser par Défaut";
+
+/* Output Mode */
+"output_mode.replace" = "Remplacer l'Original";
+"output_mode.new_copy" = "Nouvelle Copie";
+"output_mode.new_copy_timestamp" = "Nouvelle Copie avec Horodatage";
+
+/* Video Processing Mode */
+"video_mode.fast_copy" = "Copie Rapide (Sans Réencodage)";
+"video_mode.safe_reencode" = "Réencodage Sûr";
+"video_mode.smart_auto" = "Auto Intelligent";
+"video_mode.fast_copy.description" = "Le plus rapide. Remultiplexe la vidéo sans réencoder.";
+"video_mode.safe_reencode.description" = "Le plus complet. Réencode toujours la vidéo.";
+"video_mode.smart_auto.description" = "Essaie la copie rapide d'abord, réencode si les métadonnées persistent.";
+
+/* Language */
+"language.system" = "Système par Défaut";
+"language.english" = "English";
+"language.french" = "Français";
+
+/* Results */
+"results.metadata_removed" = "%d métadonnées supprimées";
+"results.space_saved" = "%@ économisé";
+"results.space_saved_inline" = "%@ économisé";
+"results.success" = "Succès";
+"results.failed" = "Échec";
+"results.gps_removed" = "Données GPS supprimées";
+"results.processing_time" = "Temps de traitement : %.2fs";
+"results.metadata_types_removed" = "%d types de métadonnées supprimés";
+
+/* Common */
+"common.cancel" = "Annuler";
+"common.done" = "Terminé";
+"common.ok" = "OK";
+"common.error" = "Erreur";
+
+/* Placeholder Views */
+"picker.photo.title" = "Sélectionner des Photos";
+"picker.photo.placeholder" = "Sélecteur de Photos - Intégration PhotoKit Requise";
+"picker.files.title" = "Sélectionner des Fichiers";
+"picker.files.placeholder" = "Sélecteur de Documents - UIDocumentPickerViewController Requis";

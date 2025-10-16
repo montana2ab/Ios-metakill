@@ -4,6 +4,7 @@ import Domain
 
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
+    @State private var showRestartAlert = false
     
     var body: some View {
         Form {
@@ -12,6 +13,9 @@ struct SettingsView: View {
                     ForEach(AppLanguage.allCases, id: \.self) { language in
                         Text(language.localizationKey.localized).tag(language)
                     }
+                }
+                .onChange(of: appState.settings.appLanguage) { _ in
+                    showRestartAlert = true
                 }
                 
                 Text("settings.language_note".localized)
@@ -110,6 +114,11 @@ struct SettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onReceive(appState.$settings) { _ in
             appState.saveSettings()
+        }
+        .alert("Language Changed", isPresented: $showRestartAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("The app language will be fully applied when you restart the app.")
         }
     }
 }
