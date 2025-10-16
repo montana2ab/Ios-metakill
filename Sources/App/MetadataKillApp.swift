@@ -23,6 +23,7 @@ final class AppState: ObservableObject {
         }
     }
     @Published var currentLocale: Locale = .current
+    @Published var localizationVersion: Int = 0 // Used to force UI updates
     
     init() {
         // Load settings from UserDefaults or use defaults
@@ -40,15 +41,26 @@ final class AppState: ObservableObject {
             UserDefaults.standard.set(data, forKey: "CleaningSettings")
         }
         updateLocale()
+        // Force UI refresh by incrementing version
+        localizationVersion += 1
     }
     
     private func updateLocale() {
         if let languageCode = settings.appLanguage.languageCode {
             currentLocale = Locale(identifier: languageCode)
             UserDefaults.standard.set([languageCode], forKey: "AppleLanguages")
+            UserDefaults.standard.synchronize()
         } else {
             currentLocale = .current
             UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+            UserDefaults.standard.synchronize()
         }
+        // Notify that localization has changed
+        NotificationCenter.default.post(name: .localizationDidChange, object: nil)
     }
+}
+
+// Notification for localization changes
+extension Notification.Name {
+    static let localizationDidChange = Notification.Name("localizationDidChange")
 }
