@@ -77,10 +77,14 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity)
                 
                 // Trust Badges
-                HStack(spacing: 20) {
-                    TrustBadge(icon: "lock.shield.fill", text: "home.badge.privacy".localized)
-                    TrustBadge(icon: "bolt.fill", text: "home.badge.fast".localized)
-                    TrustBadge(icon: "checkmark.seal.fill", text: "home.badge.quality".localized)
+                VStack(spacing: 0) {
+                    HStack(spacing: 20) {
+                        TrustBadge(icon: "lock.shield.fill", text: "home.badge.privacy".localized)
+                        TrustBadge(icon: "bolt.fill", text: "home.badge.fast".localized)
+                        TrustBadge(icon: "checkmark.seal.fill", text: "home.badge.quality".localized)
+                    }
+                    .accessibilityElement(children: .contain)
+                    .accessibilityLabel("Trust indicators")
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 24)
@@ -99,6 +103,8 @@ struct ContentView: View {
                         FeatureRow(icon: "mappin.slash", title: "home.feature.location".localized, color: .green)
                         FeatureRow(icon: "iphone.and.arrow.forward", title: "home.feature.ondevice".localized, color: .blue)
                     }
+                    .accessibilityElement(children: .contain)
+                    .accessibilityLabel("Key features")
                     .padding(.horizontal)
                 }
                 .padding(.vertical, 24)
@@ -213,6 +219,7 @@ struct FeatureRow: View {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundColor(.green)
                 .font(.system(size: 18))
+                .accessibilityHidden(true)
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 16)
@@ -264,6 +271,7 @@ struct ActionButton: View {
                 .frame(width: 28, height: 28)
                 .background(color)
                 .clipShape(Circle())
+                .accessibilityHidden(true)
         }
         .padding()
         .background(Color(.systemBackground))
