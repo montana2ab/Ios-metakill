@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import SwiftUI
 import UniformTypeIdentifiers
 import Domain
@@ -107,3 +108,5 @@ public struct MediaDocumentPicker: UIViewControllerRepresentable {
         }
     }
 }
+
+#endif // canImport(UIKit)

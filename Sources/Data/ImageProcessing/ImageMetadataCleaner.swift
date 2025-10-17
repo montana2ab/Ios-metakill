@@ -1,3 +1,4 @@
+#if canImport(CoreGraphics) && canImport(ImageIO)
 import Foundation
 import CoreGraphics
 import ImageIO
@@ -355,4 +356,6 @@ extension ImageMetadataCleaner {
         return cleanData
     }
 }
+
+#endif // canImport(CoreGraphics) && canImport(ImageIO)
 

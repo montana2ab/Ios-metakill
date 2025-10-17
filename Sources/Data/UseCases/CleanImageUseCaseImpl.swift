@@ -1,3 +1,4 @@
+#if canImport(CoreGraphics) && canImport(ImageIO)
 import Foundation
 import Domain
 
@@ -104,3 +105,5 @@ public final class CleanImageUseCaseImpl: CleanImageUseCase {
         return attributes[.size] as? Int64 ?? 0
     }
 }
+
+#endif // canImport(CoreGraphics) && canImport(ImageIO)

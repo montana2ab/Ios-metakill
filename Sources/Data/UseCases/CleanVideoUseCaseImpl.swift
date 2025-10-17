@@ -1,3 +1,4 @@
+#if canImport(AVFoundation)
 import Foundation
 import Domain
 
@@ -140,4 +141,6 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
         return attributes[.size] as? Int64 ?? 0
     }
 }
+
+#endif // canImport(AVFoundation)
 

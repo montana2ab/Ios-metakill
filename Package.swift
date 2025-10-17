@@ -11,12 +11,8 @@ let package = Package(
         .macOS(.v12) // For development/testing
     ],
     products: [
-        .library(
-            name: "App",
-            targets: ["App"]),
-        .library(
-            name: "MetadataKill",
-            targets: ["App"]),
+        // SPM libraries for reusable components
+        // Note: App layer is only available via Xcode project, not as SPM product
         .library(
             name: "MetadataKillDomain",
             targets: ["Domain"]),
@@ -53,21 +49,19 @@ let package = Package(
             path: "Sources/Platform"
         ),
         
-        // App Layer - UI and dependency injection
-        .target(
-            name: "App",
-            dependencies: ["Domain", "Data", "Platform"],
-            path: "Sources/App",
-            resources: [
-                .process("Resources")
-            ]
-        ),
+        // Note: App layer is not exposed as SPM target
+        // Build the iOS app using MetadataKill.xcodeproj in Xcode
         
         // Tests
         .testTarget(
             name: "DomainTests",
             dependencies: ["Domain"],
             path: "Tests/DomainTests"
+        ),
+        .testTarget(
+            name: "DataTests",
+            dependencies: ["Domain", "Data"],
+            path: "Tests/DataTests"
         ),
     ]
 )
