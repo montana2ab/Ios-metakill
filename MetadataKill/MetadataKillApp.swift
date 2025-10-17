@@ -1,2 +1,5 @@
-// This file previously defined a duplicate @main App and AppState.
-// It has been intentionally left empty to avoid duplicate symbols at link time.
+// The actual app implementation is in Sources/App/MetadataKillApp.swift
+// This file re-exports the main entry point from the App module
+// which is imported as a local Swift Package dependency
+
+@_exported import App

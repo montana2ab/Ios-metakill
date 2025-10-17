@@ -374,9 +374,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		3CA3E44F2E9F04DC0034A953 /* XCLocalSwiftPackageReference "../Ios-metakill" */ = {
+		3CA3E44F2E9F04DC0034A953 /* XCLocalSwiftPackageReference "." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../Ios-metakill";
+			relativePath = ..;
 		};
 /* End XCLocalSwiftPackageReference section */
 
