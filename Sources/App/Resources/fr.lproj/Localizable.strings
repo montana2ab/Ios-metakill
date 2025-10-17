@@ -3,6 +3,17 @@
 "app.subtitle" = "Nettoyer les métadonnées des photos et vidéos";
 
 /* Home Screen */
+"home.hero.tagline" = "Protégez Votre Vie Privée Instantanément";
+"home.hero.description" = "Supprimez toutes les métadonnées des photos et vidéos. Traitement 100% sur l'appareil.";
+"home.badge.privacy" = "100% Privé";
+"home.badge.fast" = "Ultra Rapide";
+"home.badge.quality" = "Sans Perte de Qualité";
+"home.features.title" = "Pourquoi Choisir MetadataKill ?";
+"home.feature.gps" = "Supprime les données de localisation GPS";
+"home.feature.exif" = "Nettoie les informations EXIF de l'appareil photo";
+"home.feature.location" = "Efface toutes les métadonnées de localisation";
+"home.feature.ondevice" = "Tout le traitement sur votre appareil";
+"home.actions.title" = "Commencer";
 "home.clean_photos" = "Nettoyer les Photos";
 "home.clean_photos.subtitle" = "Supprimer EXIF, GPS et autres métadonnées";
 "home.clean_videos" = "Nettoyer les Vidéos";
