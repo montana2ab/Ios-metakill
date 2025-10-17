@@ -18,7 +18,7 @@ AFTER:
 │ Multi-layer Blue→Purple→Pink    │
 │    Gradient + Overlay Effect    │
 │                                 │
-│    ⚪ (glow circle blur)        │
+│ ⚪ (white blur 110x110, 20pt)  │
 │        🛡️ (75pt gradient)      │
 │                                 │
 │    MetadataKill (40pt rounded)  │
@@ -49,16 +49,16 @@ Colored circular backgrounds
 ```
 BEFORE:
 ┌────────────────────────────────┐
-│ [📍] Text              ✓       │
+│ [📍] Text          ✓ (green)   │
+│ Flat 40x40 icon                │
 └────────────────────────────────┘
-40x40 flat icon, green checkmark
 
 AFTER:
 ┌────────────────────────────────┐
-│ [📍] Text              ✓       │
-│ Gradient icon, colored check   │
+│ [📍] Text          ✓ (colored) │
+│ 48x48 gradient icon + shadow   │
+│ Color-matched checkmark        │
 └────────────────────────────────┘
-48x48 gradient icon, color-matched checkmark
 ```
 
 ## Action Buttons

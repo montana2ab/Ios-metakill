@@ -15,9 +15,9 @@ This document details the aesthetic improvements made to the main screen (Conten
 
 **After / Après:**
 - **Multi-layer gradient** with 3 vibrant colors:
-  - Blue (#007AFF - iOS blue)
-  - Purple (#5C33D9)
-  - Purple-Pink (#9420BF)
+  - Blue: RGB(0, 122, 255) = #007AFF (iOS blue)
+  - Purple: RGB(92, 51, 217) = #5C33D9
+  - Purple-Pink: RGB(148, 32, 191) = #9420BF
 - **Icon with glow effect:**
   - White blur circle behind icon for depth
   - Enhanced shadow (15pt radius)
@@ -146,11 +146,11 @@ This document details the aesthetic improvements made to the main screen (Conten
 ## Color Palette / Palette de Couleurs
 
 ### New Accent Colors / Nouvelles Couleurs d'Accent
-- **Blue:** RGB(0, 122, 255) - #007AFF
-- **Purple:** RGB(148, 32, 191) - #9420BF
-- **Purple-Mid:** RGB(92, 51, 217) - #5C33D9
-- **Green:** RGB(52, 199, 89) - #34C759
-- **Orange:** System orange
+- **Blue:** RGB(0, 122, 255) = #007AFF
+- **Purple:** RGB(148, 32, 191) = #9420BF
+- **Purple-Mid:** RGB(92, 51, 217) = #5C33D9
+- **Green:** RGB(52, 199, 89) = #34C759
+- **Orange:** System orange (RGB varies by theme)
 
 ### Design Principles / Principes de Design
 - Vibrant, modern color scheme
