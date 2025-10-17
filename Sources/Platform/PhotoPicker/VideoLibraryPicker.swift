@@ -1,3 +1,4 @@
+#if canImport(Photos) && canImport(PhotosUI) && canImport(UIKit)
 import SwiftUI
 import PhotosUI
 import Photos
@@ -120,3 +121,5 @@ public struct VideoLibraryPicker: UIViewControllerRepresentable {
         }
     }
 }
+
+#endif // canImport(Photos) && canImport(PhotosUI) && canImport(UIKit)

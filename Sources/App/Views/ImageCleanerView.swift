@@ -75,9 +75,7 @@ struct ImageCleanerView: View {
                 // Action Button
                 if !viewModel.isProcessing {
                     Button(action: {
-                        Task {
-                            await viewModel.processImages(settings: appState.settings)
-                        }
+                        viewModel.processImages(settings: appState.settings)
                     }) {
                         Text(viewModel.selectedImages.count > 1 ? "image_cleaner.clean_button_plural".localized(viewModel.selectedImages.count) : "image_cleaner.clean_button".localized(viewModel.selectedImages.count))
                             .fontWeight(.semibold)
@@ -226,46 +224,85 @@ final class ImageCleanerViewModel: ObservableObject {
     
     private var task: Task<Void, Never>?
     
-    func processImages(settings: CleaningSettings) async {
-        isProcessing = true
+    func processImages(settings: CleaningSettings) {
+        cancel()
+
+        task = Task(priority: .userInitiated) { [weak self, settings] in
+            guard let self else { return }
+            await self.runProcessing(settings: settings)
+        }
+    }
+
+    func removeImages(at offsets: IndexSet) {
+        selectedImages.remove(atOffsets: offsets)
+    }
+
+    func cancel() {
+        task?.cancel()
+        task = nil
+        isProcessing = false
         progress = 0
         currentIndex = 0
-        results = []
-        
+    }
+
+    private func runProcessing(settings: CleaningSettings) async {
+        await MainActor.run {
+            isProcessing = true
+            progress = 0
+            currentIndex = 0
+            results = []
+            showingError = false
+            errorMessage = ""
+        }
+
         let cleaner = ImageMetadataCleaner()
         let storage = LocalStorageRepository()
         let useCase = CleanImageUseCaseImpl(cleaner: cleaner, storage: storage)
-        
-        for (index, item) in selectedImages.enumerated() {
-            currentIndex = index + 1
-            
+
+        let images = await MainActor.run { selectedImages }
+
+        for (index, item) in images.enumerated() {
+            if Task.isCancelled { break }
+
+            await MainActor.run {
+                currentIndex = index + 1
+            }
+
             do {
                 let result = try await useCase.execute(
                     imageURL: item.sourceURL,
                     settings: settings
                 )
-                results.append(result)
+
+                if Task.isCancelled { break }
+
+                await MainActor.run {
+                    results.append(result)
+                    progress = Double(currentIndex) / Double(images.count)
+                }
             } catch {
-                results.append(CleaningResult(
-                    mediaItem: item,
-                    state: .failed,
-                    error: error.localizedDescription
-                ))
+                if Task.isCancelled || error is CancellationError { break }
+
+                await MainActor.run {
+                    results.append(CleaningResult(
+                        mediaItem: item,
+                        state: .failed,
+                        error: error.localizedDescription
+                    ))
+                    progress = Double(currentIndex) / Double(images.count)
+                    showingError = true
+                    errorMessage = error.localizedDescription
+                }
             }
-            
-            progress = Double(currentIndex) / Double(selectedImages.count)
         }
-        
-        isProcessing = false
-    }
-    
-    func removeImages(at offsets: IndexSet) {
-        selectedImages.remove(atOffsets: offsets)
-    }
-    
-    func cancel() {
-        task?.cancel()
-        isProcessing = false
+
+        await MainActor.run {
+            if Task.isCancelled {
+                progress = 0
+            }
+            isProcessing = false
+            task = nil
+        }
     }
 }
 

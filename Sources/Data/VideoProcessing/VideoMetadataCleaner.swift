@@ -1,7 +1,33 @@
+#if canImport(AVFoundation)
 import Foundation
 import AVFoundation
 import CoreMedia
 import Domain
+
+/// Video metadata cleaner using modern async/await AVFoundation APIs
+/// 
+/// ## Platform Requirements
+/// - iOS 15.0+: Uses async `load()` and `loadTracks()` APIs
+/// - iOS 14.x fallback: Use `loadValuesAsynchronously(forKeys:)` with callbacks
+/// 
+/// ## API Compatibility Note
+/// The code uses iOS 15+ async APIs throughout. For iOS 14 support, replace:
+/// ```swift
+/// // iOS 15+
+/// let metadata = try await asset.load(.commonMetadata)
+/// 
+/// // iOS 14 fallback
+/// await withCheckedThrowingContinuation { continuation in
+///     asset.loadValuesAsynchronously(forKeys: ["commonMetadata"]) {
+///         let status = asset.statusOfValue(forKey: "commonMetadata", error: nil)
+///         if status == .loaded {
+///             continuation.resume(returning: asset.commonMetadata)
+///         } else {
+///             continuation.resume(throwing: AVFoundationError.contentIsUnavailable)
+///         }
+///     }
+/// }
+/// ```
 
 /// Represents an in-flight cleaning operation that can be awaited later
 public struct CleaningTask {
@@ -317,10 +343,14 @@ public final class VideoMetadataCleaner {
     
     // MARK: - Private Methods
     
+    /// Detect metadata in video asset
+    /// Uses modern async/await APIs (iOS 15+)
+    /// For iOS 14 fallback, use loadValuesAsynchronously
+    @available(iOS 15.0, macOS 12.0, *)
     private func detectMetadata(in asset: AVAsset) async throws -> [MetadataInfo] {
         var detectedMetadata: [MetadataInfo] = []
         
-        // Check common metadata
+        // Check common metadata using modern async API
         let commonMetadata = try await asset.load(.commonMetadata)
         if !commonMetadata.isEmpty {
             detectedMetadata.append(MetadataInfo(
@@ -657,3 +687,5 @@ extension VideoMetadataCleaner {
         return data
     }
 }
+
+#endif // canImport(AVFoundation)

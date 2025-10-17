@@ -1,0 +1,6 @@
+# DataTests
+
+This directory is reserved for Data layer tests.
+Tests require iOS frameworks and must be run via Xcode.
+
+See README.md for more information.
