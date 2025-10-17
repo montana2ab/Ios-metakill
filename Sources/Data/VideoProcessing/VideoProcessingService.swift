@@ -89,7 +89,7 @@ public enum VideoProcessingService {
 
             if stripMetadata {
                 exporter.metadata = [] // strip container metadata
-                exporter.metadataItemFilter = .forSharing // strip sensitive metadata (e.g., location) when possible
+                exporter.metadataItemFilter = .forSharing() // strip sensitive metadata (e.g., location) when possible
                 if #available(iOS 16.0, *) {
                     exporter.directoryForTemporaryFiles = tempDir
                 }
@@ -231,11 +231,14 @@ public enum VideoProcessingService {
             let estimated = Int64(max(1_000_000, videoTrack.estimatedDataRate))
             let targetBitrate = max(5_000_000, min(estimated * 2, 50_000_000))
             var videoCompressionProps: [String: Any] = [
-                AVVideoAverageBitRateKey: NSNumber(value: targetBitrate),
-                AVVideoProfileLevelKey: preserveHDR ? AVVideoProfileLevelHEVC_Main10_AutoLevel : AVVideoProfileLevelH264_High_AutoLevel
+                AVVideoAverageBitRateKey: NSNumber(value: targetBitrate)
             ]
+            // Only set profile level for H.264, not for HEVC
+            if !preserveHDR {
+                videoCompressionProps[AVVideoProfileLevelKey] = AVVideoProfileLevelH264MainAutoLevel
+            }
             if preserveHDR {
-                let transfer = usePQ ? AVVideoTransferFunction_ITU_R_2100_PQ : AVVideoTransferFunction_ITU_R_2100_HLG
+                let transfer = usePQ ? kCVImageBufferTransferFunction_SMPTE_ST_2084_PQ : kCVImageBufferTransferFunction_ITU_R_2100_HLG
                 videoCompressionProps[AVVideoColorPropertiesKey] = [
                     AVVideoColorPrimariesKey: AVVideoColorPrimaries_ITU_R_2020,
                     AVVideoTransferFunctionKey: transfer,
@@ -340,7 +343,7 @@ private extension AVAssetTrack {
         }
         // Inspect format descriptions for transfer function keys
         for desc in self.formatDescriptions {
-            guard let fmt = desc as? CMFormatDescription,
+            guard let fmt = desc as CMFormatDescription,
                   let ext = CMFormatDescriptionGetExtensions(fmt) as? [AnyHashable: Any],
                   let colorInfo = ext[kCMFormatDescriptionExtension_ColorPrimaries] ?? ext[kCMFormatDescriptionExtension_TransferFunction] else { continue }
             // Presence of these keys often indicates HDR content (PQ or HLG)
@@ -351,10 +354,10 @@ private extension AVAssetTrack {
 
     var isPQTransfer: Bool {
         for desc in self.formatDescriptions {
-            guard let fmt = desc as? CMFormatDescription,
+            guard let fmt = desc as CMFormatDescription,
                   let ext = CMFormatDescriptionGetExtensions(fmt) as? [AnyHashable: Any] else { continue }
             if let tf = ext[kCMFormatDescriptionExtension_TransferFunction] as? String {
-                if tf == (AVVideoTransferFunction_ITU_R_2100_PQ as String) { return true }
+                if tf == (kCVImageBufferTransferFunction_SMPTE_ST_2084_PQ as CFString as String) { return true }
             }
         }
         return false
