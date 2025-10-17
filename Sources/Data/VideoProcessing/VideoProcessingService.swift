@@ -1,7 +1,9 @@
+#if canImport(AVFoundation)
 import Foundation
 import AVFoundation
 import CoreMedia
 import CoreVideo
+import Domain
 
 /// Errors that can occur during video processing.
 public enum VideoProcessingError: Error, LocalizedError {
@@ -362,3 +364,5 @@ private extension AVAssetTrack {
 private extension CGSize {
     var absoluteSize: CGSize { CGSize(width: abs(width), height: abs(height)) }
 }
+
+#endif // canImport(AVFoundation)

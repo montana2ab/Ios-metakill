@@ -12,7 +12,6 @@ let package = Package(
     ],
     products: [
         // SPM libraries for reusable components
-        // Note: App layer is only available via Xcode project, not as SPM product
         .library(
             name: "MetadataKillDomain",
             targets: ["Domain"]),
@@ -22,6 +21,10 @@ let package = Package(
         .library(
             name: "MetadataKillPlatform",
             targets: ["Platform"]),
+        // App layer as a library product for Xcode project
+        .library(
+            name: "MetadataKill",
+            targets: ["App"]),
     ],
     dependencies: [
         // Add FFmpegKit if needed for advanced video processing
@@ -49,8 +52,15 @@ let package = Package(
             path: "Sources/Platform"
         ),
         
-        // Note: App layer is not exposed as SPM target
-        // Build the iOS app using MetadataKill.xcodeproj in Xcode
+        // App Layer - Full iOS application
+        .target(
+            name: "App",
+            dependencies: ["Domain", "Data", "Platform"],
+            path: "Sources/App",
+            resources: [
+                .process("Resources")
+            ]
+        ),
         
         // Tests
         .testTarget(

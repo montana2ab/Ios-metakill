@@ -1,5 +1,7 @@
+#if canImport(Photos)
 import Foundation
 import Photos
+import Domain
 
 /// A helper service to delete original media after a successful export,
 /// based on user settings and the media source.
@@ -109,3 +111,5 @@ PhotoDeletionService.deleteOriginalIfNeeded(settings: appState.settings,
     // handle result
 }
 */
+
+#endif // canImport(Photos)
