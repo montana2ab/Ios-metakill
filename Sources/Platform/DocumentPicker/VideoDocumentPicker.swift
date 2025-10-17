@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import SwiftUI
 import UniformTypeIdentifiers
 import Domain
@@ -96,3 +97,5 @@ public struct VideoDocumentPicker: UIViewControllerRepresentable {
         }
     }
 }
+
+#endif // canImport(UIKit)

@@ -1,3 +1,4 @@
+#if canImport(AVFoundation)
 import Foundation
 import AVFoundation
 import CoreMedia
@@ -657,3 +658,5 @@ extension VideoMetadataCleaner {
         return data
     }
 }
+
+#endif // canImport(AVFoundation)
