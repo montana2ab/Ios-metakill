@@ -15,6 +15,8 @@
 
 **🚀 Beta Testing Ready! | Prêt pour les tests bêta !** - See [BETA_READY.md](BETA_READY.md) | Voir [BETA_READY.md](BETA_READY.md)
 
+**📚 Technical Documentation**: [Build Guide](BUILD_GUIDE.md) • [Video Processing](VIDEO_PROCESSING.md) • [Live Photos](LIVE_PHOTOS.md)
+
 [Features](#features) • [Installation](#installation) • [Usage](#usage) • [Languages](#languages) • [Privacy](#privacy) • [Beta Testing](#beta-testing)
 
 [Fonctionnalités](#features) • [Installation](#installation) • [Utilisation](#usage) • [Langues](#languages) • [Confidentialité](#privacy) • [Tests Bêta](#beta-testing)
@@ -140,6 +142,12 @@ SwiftUI interface:
 - **iOS/iPadOS**: 15.0+
 - **Swift**: 5.9+
 - **Platforms**: Apple Silicon & Intel simulators supported
+
+> **📖 Build Guide**: See [BUILD_GUIDE.md](BUILD_GUIDE.md) for detailed information about:
+> - Building with Xcode vs SPM CLI
+> - Which layers work on which platforms
+> - Cross-platform development
+> - CI/CD integration
 
 ### Quick Start (3 Steps)
 
