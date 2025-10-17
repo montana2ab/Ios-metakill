@@ -342,20 +342,20 @@ private extension AVAssetTrack {
             if self.hasMediaCharacteristic(.containsHDRVideo) { return true }
         }
         // Inspect format descriptions for transfer function keys
-        for desc in self.formatDescriptions {
-            guard let fmt = desc as CMFormatDescription,
-                  let ext = CMFormatDescriptionGetExtensions(fmt) as? [AnyHashable: Any],
-                  let colorInfo = ext[kCMFormatDescriptionExtension_ColorPrimaries] ?? ext[kCMFormatDescriptionExtension_TransferFunction] else { continue }
+        for case let fmt as CMFormatDescription in self.formatDescriptions {
+            guard let ext = CMFormatDescriptionGetExtensions(fmt) as? [AnyHashable: Any] else { continue }
             // Presence of these keys often indicates HDR content (PQ or HLG)
-            if ext[kCMFormatDescriptionExtension_TransferFunction] != nil { return true }
+            if ext[kCMFormatDescriptionExtension_TransferFunction] != nil ||
+               ext[kCMFormatDescriptionExtension_ColorPrimaries] != nil {
+                return true
+            }
         }
         return false
     }
 
     var isPQTransfer: Bool {
-        for desc in self.formatDescriptions {
-            guard let fmt = desc as CMFormatDescription,
-                  let ext = CMFormatDescriptionGetExtensions(fmt) as? [AnyHashable: Any] else { continue }
+        for case let fmt as CMFormatDescription in self.formatDescriptions {
+            guard let ext = CMFormatDescriptionGetExtensions(fmt) as? [AnyHashable: Any] else { continue }
             if let tf = ext[kCMFormatDescriptionExtension_TransferFunction] as? String {
                 if tf == (kCVImageBufferTransferFunction_SMPTE_ST_2084_PQ as CFString as String) { return true }
             }

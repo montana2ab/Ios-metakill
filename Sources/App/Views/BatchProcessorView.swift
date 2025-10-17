@@ -294,6 +294,12 @@ final class BatchProcessorViewModel: ObservableObject {
                         videoURL: item.sourceURL,
                         settings: settings
                     )
+                @unknown default:
+                    throw NSError(
+                        domain: "BatchProcessorView",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "Unsupported media type"]
+                    )
                 }
 
                 if Task.isCancelled { break }
