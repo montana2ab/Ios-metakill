@@ -44,6 +44,11 @@
 "batch_processor.select_from_photos" = "Select from Photos";
 "batch_processor.select_from_files" = "Select from Files";
 "batch_processor.select_files" = "Select Files";
+"batch_processor.selected_items" = "Selected Items";
+"batch_processor.results" = "Results";
+"batch_processor.process_button" = "Process Items";
+"batch_processor.processing" = "Processing";
+"batch_processor.cancel" = "Cancel";
 
 /* Settings */
 "settings.title" = "Settings";
@@ -109,6 +114,8 @@
 "common.done" = "Done";
 "common.ok" = "OK";
 "common.error" = "Error";
+"common.image" = "Image";
+"common.video" = "Video";
 
 /* Placeholder Views */
 "picker.photo.title" = "Select Photos";

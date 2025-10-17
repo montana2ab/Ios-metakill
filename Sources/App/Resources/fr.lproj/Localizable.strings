@@ -44,6 +44,11 @@
 "batch_processor.select_from_photos" = "Sélectionner depuis Photos";
 "batch_processor.select_from_files" = "Sélectionner depuis Fichiers";
 "batch_processor.select_files" = "Sélectionner des Fichiers";
+"batch_processor.selected_items" = "Éléments Sélectionnés";
+"batch_processor.results" = "Résultats";
+"batch_processor.process_button" = "Traiter les Éléments";
+"batch_processor.processing" = "Traitement en cours";
+"batch_processor.cancel" = "Annuler";
 
 /* Settings */
 "settings.title" = "Paramètres";
@@ -109,6 +114,8 @@
 "common.done" = "Terminé";
 "common.ok" = "OK";
 "common.error" = "Erreur";
+"common.image" = "Image";
+"common.video" = "Vidéo";
 
 /* Placeholder Views */
 "picker.photo.title" = "Sélectionner des Photos";
