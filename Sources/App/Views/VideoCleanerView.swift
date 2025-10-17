@@ -74,9 +74,7 @@ struct VideoCleanerView: View {
                 // Action Button
                 if !viewModel.isProcessing {
                     Button(action: {
-                        Task {
-                            await viewModel.processVideos(settings: appState.settings)
-                        }
+                        viewModel.processVideos(settings: appState.settings)
                     }) {
                         Text(viewModel.selectedVideos.count > 1 ? "video_cleaner.clean_button_plural".localized(viewModel.selectedVideos.count) : "video_cleaner.clean_button".localized(viewModel.selectedVideos.count))
                             .fontWeight(.semibold)
@@ -159,46 +157,81 @@ final class VideoCleanerViewModel: ObservableObject {
     
     private var task: Task<Void, Never>?
     
-    func processVideos(settings: CleaningSettings) async {
-        isProcessing = true
+    func processVideos(settings: CleaningSettings) {
+        cancel()
+
+        task = Task(priority: .userInitiated) { [weak self, settings] in
+            guard let self else { return }
+            await self.runProcessing(settings: settings)
+        }
+    }
+
+    func removeVideos(at offsets: IndexSet) {
+        selectedVideos.remove(atOffsets: offsets)
+    }
+
+    func cancel() {
+        task?.cancel()
+        task = nil
+        isProcessing = false
         progress = 0
         currentIndex = 0
-        results = []
-        
+    }
+
+    private func runProcessing(settings: CleaningSettings) async {
+        await MainActor.run {
+            isProcessing = true
+            progress = 0
+            currentIndex = 0
+            results = []
+        }
+
         let cleaner = VideoMetadataCleaner()
         let storage = LocalStorageRepository()
         let useCase = CleanVideoUseCaseImpl(cleaner: cleaner, storage: storage)
-        
-        for (index, item) in selectedVideos.enumerated() {
-            currentIndex = index + 1
-            
+
+        let videos = await MainActor.run { selectedVideos }
+
+        for (index, item) in videos.enumerated() {
+            if Task.isCancelled { break }
+
+            await MainActor.run {
+                currentIndex = index + 1
+            }
+
             do {
                 let result = try await useCase.execute(
                     videoURL: item.sourceURL,
                     settings: settings
                 )
-                results.append(result)
+
+                if Task.isCancelled { break }
+
+                await MainActor.run {
+                    results.append(result)
+                    progress = Double(currentIndex) / Double(videos.count)
+                }
             } catch {
-                results.append(CleaningResult(
-                    mediaItem: item,
-                    state: .failed,
-                    error: error.localizedDescription
-                ))
+                if Task.isCancelled || error is CancellationError { break }
+
+                await MainActor.run {
+                    results.append(CleaningResult(
+                        mediaItem: item,
+                        state: .failed,
+                        error: error.localizedDescription
+                    ))
+                    progress = Double(currentIndex) / Double(videos.count)
+                }
             }
-            
-            progress = Double(currentIndex) / Double(selectedVideos.count)
         }
-        
-        isProcessing = false
-    }
-    
-    func removeVideos(at offsets: IndexSet) {
-        selectedVideos.remove(atOffsets: offsets)
-    }
-    
-    func cancel() {
-        task?.cancel()
-        isProcessing = false
+
+        await MainActor.run {
+            if Task.isCancelled {
+                progress = 0
+            }
+            isProcessing = false
+            task = nil
+        }
     }
 }
 
