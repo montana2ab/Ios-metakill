@@ -74,7 +74,7 @@ Updated `project.pbxproj`:
 
 ```diff
 - relativePath = "../Ios-metakill";
-+ relativePath = ..;
++ relativePath = ".";
 ```
 
 This correctly points to the current directory (where Package.swift is located).
