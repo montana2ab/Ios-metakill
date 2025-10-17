@@ -74,9 +74,7 @@ struct BatchProcessorView: View {
                 // Action Button
                 if !viewModel.isProcessing {
                     Button(action: {
-                        Task {
-                            await viewModel.processItems(settings: appState.settings)
-                        }
+                        viewModel.processItems(settings: appState.settings)
                     }) {
                         Text("batch_processor.process_button".localized + " (\(viewModel.items.count))")
                             .fontWeight(.semibold)
@@ -236,68 +234,97 @@ final class BatchProcessorViewModel: ObservableObject {
     
     private var task: Task<Void, Never>?
     
-    func processItems(settings: CleaningSettings) async {
-        isProcessing = true
+    func processItems(settings: CleaningSettings) {
+        cancel()
+
+        task = Task(priority: .userInitiated) { [weak self, settings] in
+            guard let self else { return }
+            await self.runProcessing(settings: settings)
+        }
+    }
+
+    func removeItems(at offsets: IndexSet) {
+        items.remove(atOffsets: offsets)
+    }
+
+    func cancel() {
+        task?.cancel()
+        task = nil
+        isProcessing = false
         progress = 0
         currentIndex = 0
-        results = []
-        
+    }
+
+    private func runProcessing(settings: CleaningSettings) async {
+        await MainActor.run {
+            isProcessing = true
+            progress = 0
+            currentIndex = 0
+            results = []
+            showingError = false
+            errorMessage = ""
+        }
+
         let imageCleaner = ImageMetadataCleaner()
         let videoCleaner = VideoMetadataCleaner()
         let storage = LocalStorageRepository()
         let imageUseCase = CleanImageUseCaseImpl(cleaner: imageCleaner, storage: storage)
         let videoUseCase = CleanVideoUseCaseImpl(cleaner: videoCleaner, storage: storage)
-        
-        task = Task {
-            for (index, item) in items.enumerated() {
-                // Check for cancellation
-                if Task.isCancelled {
-                    break
-                }
-                
+
+        let items = await MainActor.run { self.items }
+
+        for (index, item) in items.enumerated() {
+            if Task.isCancelled { break }
+
+            await MainActor.run {
                 currentIndex = index + 1
-                
-                do {
-                    let result: CleaningResult
-                    
-                    switch item.type {
-                    case .image:
-                        result = try await imageUseCase.execute(
-                            imageURL: item.sourceURL,
-                            settings: settings
-                        )
-                    case .video:
-                        result = try await videoUseCase.execute(
-                            videoURL: item.sourceURL,
-                            settings: settings
-                        )
-                    }
-                    
+            }
+
+            do {
+                let result: CleaningResult
+
+                switch item.type {
+                case .image:
+                    result = try await imageUseCase.execute(
+                        imageURL: item.sourceURL,
+                        settings: settings
+                    )
+                case .video:
+                    result = try await videoUseCase.execute(
+                        videoURL: item.sourceURL,
+                        settings: settings
+                    )
+                }
+
+                if Task.isCancelled { break }
+
+                await MainActor.run {
                     results.append(result)
-                } catch {
+                    progress = Double(currentIndex) / Double(items.count)
+                }
+            } catch {
+                if Task.isCancelled || error is CancellationError { break }
+
+                await MainActor.run {
                     results.append(CleaningResult(
                         mediaItem: item,
                         state: .failed,
                         error: error.localizedDescription
                     ))
+                    progress = Double(currentIndex) / Double(items.count)
+                    showingError = true
+                    errorMessage = error.localizedDescription
                 }
-                
-                progress = Double(currentIndex) / Double(items.count)
             }
-            
-            isProcessing = false
         }
-        
-        await task?.value
-    }
-    
-    func removeItems(at offsets: IndexSet) {
-        items.remove(atOffsets: offsets)
-    }
-    
-    func cancel() {
-        task?.cancel()
-        isProcessing = false
+
+        await MainActor.run {
+            if Task.isCancelled {
+                progress = 0
+            }
+            isProcessing = false
+            task = nil
+        }
     }
 }
 
