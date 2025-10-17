@@ -17,11 +17,16 @@ public final class LocalStorageRepository: StorageRepository {
         settings: CleaningSettings
     ) async throws -> URL {
         
-        let outputURL = try await generateOutputURL(for: originalItem, settings: settings)
+        // Use item replacement directory for secure temporary storage
+        let tempDirectory = try fileManager.url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: fileManager.temporaryDirectory,
+            create: true
+        )
         
-        // Ensure parent directory exists
-        let parentDirectory = outputURL.deletingLastPathComponent()
-        try fileManager.createDirectory(at: parentDirectory, withIntermediateDirectories: true)
+        let tempURL = tempDirectory.appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension(originalItem.sourceURL.pathExtension)
         
         // Check available space
         let availableSpace = try await availableSpace()
@@ -29,8 +34,27 @@ public final class LocalStorageRepository: StorageRepository {
             throw CleaningError.insufficientSpace
         }
         
-        // Write data
-        try data.write(to: outputURL, options: .atomic)
+        // Write data with file protection
+        try data.write(to: tempURL, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        
+        // Exclude from iCloud backup
+        var resourceValues = URLResourceValues()
+        resourceValues.isExcludedFromBackup = true
+        var mutableURL = tempURL
+        try mutableURL.setResourceValues(resourceValues)
+        
+        // Move to final destination
+        let outputURL = try await generateOutputURL(for: originalItem, settings: settings)
+        
+        // Ensure parent directory exists
+        let parentDirectory = outputURL.deletingLastPathComponent()
+        try fileManager.createDirectory(at: parentDirectory, withIntermediateDirectories: true)
+        
+        // Atomic replacement
+        if fileManager.fileExists(atPath: outputURL.path) {
+            try fileManager.removeItem(at: outputURL)
+        }
+        try fileManager.moveItem(at: tempURL, to: outputURL)
         
         return outputURL
     }
@@ -197,11 +221,16 @@ public final class LocalStorageRepository: StorageRepository {
         settings: CleaningSettings
     ) async throws -> URL {
         
-        let outputURL = try await generateOutputURL(for: originalItem, settings: settings)
+        // Use item replacement directory for secure temporary storage
+        let tempDirectory = try fileManager.url(
+            for: .itemReplacementDirectory,
+            in: .userDomainMask,
+            appropriateFor: fileManager.temporaryDirectory,
+            create: true
+        )
         
-        // Ensure parent directory exists
-        let parentDirectory = outputURL.deletingLastPathComponent()
-        try fileManager.createDirectory(at: parentDirectory, withIntermediateDirectories: true)
+        let tempURL = tempDirectory.appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension(originalItem.sourceURL.pathExtension)
         
         // Check available space
         let availableSpace = try await availableSpace()
@@ -209,8 +238,27 @@ public final class LocalStorageRepository: StorageRepository {
             throw CleaningError.insufficientSpace
         }
         
-        // Write data
-        try data.write(to: outputURL, options: .atomic)
+        // Write data atomically
+        try data.write(to: tempURL, options: .atomic)
+        
+        // Exclude from iCloud backup
+        var resourceValues = URLResourceValues()
+        resourceValues.isExcludedFromBackup = true
+        var mutableURL = tempURL
+        try mutableURL.setResourceValues(resourceValues)
+        
+        // Move to final destination
+        let outputURL = try await generateOutputURL(for: originalItem, settings: settings)
+        
+        // Ensure parent directory exists
+        let parentDirectory = outputURL.deletingLastPathComponent()
+        try fileManager.createDirectory(at: parentDirectory, withIntermediateDirectories: true)
+        
+        // Atomic replacement
+        if fileManager.fileExists(atPath: outputURL.path) {
+            try fileManager.removeItem(at: outputURL)
+        }
+        try fileManager.moveItem(at: tempURL, to: outputURL)
         
         return outputURL
     }
