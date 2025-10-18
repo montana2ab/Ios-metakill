@@ -222,10 +222,11 @@ final class VideoCleanerViewModel: ObservableObject {
                     videoURL: item.sourceURL,
                     settings: settings,
                     progressHandler: { [weak self] videoProgress in
-                        Task { @MainActor [weak self] in
-                            self?.videoProgress = videoProgress
+                        guard let self else { return }
+                        Task { @MainActor in
+                            self.videoProgress = videoProgress
                             // Update overall progress: (completed videos + current video progress) / total videos
-                            self?.progress = (Double(index) + videoProgress) / Double(videos.count)
+                            self.progress = (Double(index) + videoProgress) / Double(videos.count)
                         }
                     }
                 )

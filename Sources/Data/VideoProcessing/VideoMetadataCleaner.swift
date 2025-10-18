@@ -242,8 +242,9 @@ public final class VideoMetadataCleaner {
                 group.addTask {
                     await self.copyTrackSamples(from: videoOutput, to: videoInput, reader: reader, isVideo: true) { pts in
                         let current = CMTimeGetSeconds(pts)
+                        // Cap at 0.99 to reserve 1.0 for completion after writer.finishWriting()
                         let ratio = max(0.0, min(current / totalSeconds, 0.99))
-                        Task { @MainActor in
+                        await MainActor.run {
                             progressHandler(ratio)
                         }
                     }
