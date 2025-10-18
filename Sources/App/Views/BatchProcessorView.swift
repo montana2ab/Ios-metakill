@@ -8,6 +8,7 @@ struct BatchProcessorView: View {
     @StateObject private var viewModel = BatchProcessorViewModel()
     @State private var showingPhotoPicker = false
     @State private var showingFilePicker = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         VStack(spacing: 20) {
@@ -66,6 +67,19 @@ struct BatchProcessorView: View {
                         Section(header: Text("batch_processor.results".localized)) {
                             ForEach(viewModel.results) { result in
                                 BatchResultRow(result: result)
+                            }
+                        }
+                        
+                        Section {
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Label("common.return_home".localized, systemImage: "house.fill")
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.orange)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10)
                             }
                         }
                     }
