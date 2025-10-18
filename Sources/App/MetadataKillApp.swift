@@ -1,9 +1,22 @@
 import SwiftUI
 import Domain
+import Platform
 
 @main
 struct MetadataKillApp: App {
     @StateObject private var appState = AppState()
+    
+    init() {
+        // Initialize logging service
+        _ = LoggingService.shared
+        LoggingService.shared.logInfo("MetadataKill app starting", category: .app)
+        
+        // Initialize MetricKit monitoring
+        if #available(iOS 14.0, *) {
+            _ = MetricKitService.shared
+            LoggingService.shared.logInfo("MetricKit monitoring initialized", category: .performance)
+        }
+    }
     
     var body: some Scene {
         WindowGroup {

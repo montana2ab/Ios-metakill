@@ -73,5 +73,10 @@ let package = Package(
             dependencies: ["Domain", "Data"],
             path: "Tests/DataTests"
         ),
+        .testTarget(
+            name: "IntegrationTests",
+            dependencies: ["Domain", "Data"],
+            path: "Tests/IntegrationTests"
+        ),
     ]
 )
