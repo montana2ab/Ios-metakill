@@ -3,6 +3,17 @@
 "app.subtitle" = "Clean metadata from photos and videos";
 
 /* Home Screen */
+"home.hero.tagline" = "Protect Your Privacy Instantly";
+"home.hero.description" = "Remove all metadata from photos and videos. 100% on-device processing.";
+"home.badge.privacy" = "100% Private";
+"home.badge.fast" = "Lightning Fast";
+"home.badge.quality" = "No Quality Loss";
+"home.features.title" = "Why Choose MetadataKill?";
+"home.feature.gps" = "Removes GPS location data";
+"home.feature.exif" = "Cleans EXIF camera information";
+"home.feature.location" = "Strips all location metadata";
+"home.feature.ondevice" = "All processing on your device";
+"home.actions.title" = "Get Started";
 "home.clean_photos" = "Clean Photos";
 "home.clean_photos.subtitle" = "Remove EXIF, GPS, and other metadata";
 "home.clean_videos" = "Clean Videos";
