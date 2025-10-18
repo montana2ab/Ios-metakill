@@ -1,3 +1,4 @@
+#if canImport(OSLog)
 import Foundation
 import OSLog
 
@@ -70,3 +71,42 @@ public enum LogCategory {
     case platform
     case performance
 }
+#else
+import Foundation
+
+/// Stub logging service for non-iOS platforms
+public final class LoggingService {
+    public static let shared = LoggingService()
+    
+    private init() {}
+    
+    public func logError(_ message: String, category: LogCategory = .app, error: Error? = nil) {
+        if let error = error {
+            print("[ERROR] \(message): \(error.localizedDescription)")
+        } else {
+            print("[ERROR] \(message)")
+        }
+    }
+    
+    public func logInfo(_ message: String, category: LogCategory = .app) {
+        print("[INFO] \(message)")
+    }
+    
+    public func logDebug(_ message: String, category: LogCategory = .app) {
+        print("[DEBUG] \(message)")
+    }
+    
+    public func logWarning(_ message: String, category: LogCategory = .app) {
+        print("[WARNING] \(message)")
+    }
+}
+
+public enum LogCategory {
+    case app
+    case metadata
+    case processing
+    case storage
+    case platform
+    case performance
+}
+#endif

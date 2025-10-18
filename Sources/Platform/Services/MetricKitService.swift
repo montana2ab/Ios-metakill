@@ -1,3 +1,4 @@
+#if canImport(MetricKit) && canImport(OSLog)
 import Foundation
 import MetricKit
 import OSLog
@@ -192,3 +193,15 @@ public final class MetricKitService: NSObject, MXMetricManagerSubscriber {
         return directory
     }
 }
+#else
+import Foundation
+
+/// Stub MetricKit service for non-iOS platforms
+public final class MetricKitService {
+    public static let shared = MetricKitService()
+    
+    private init() {
+        print("[MetricKit] Stub service initialized (iOS-only feature)")
+    }
+}
+#endif
