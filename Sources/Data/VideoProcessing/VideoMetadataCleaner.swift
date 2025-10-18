@@ -244,7 +244,7 @@ public final class VideoMetadataCleaner {
                         let current = CMTimeGetSeconds(pts)
                         // Cap at 0.99 to reserve 1.0 for completion after writer.finishWriting()
                         let ratio = max(0.0, min(current / totalSeconds, 0.99))
-                        await MainActor.run {
+                        Task { @MainActor in
                             progressHandler(ratio)
                         }
                     }
