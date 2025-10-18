@@ -127,6 +127,7 @@
 "common.error" = "Erreur";
 "common.image" = "Image";
 "common.video" = "Vidéo";
+"common.return_home" = "Retour à l'accueil";
 
 /* Placeholder Views */
 "picker.photo.title" = "Sélectionner des Photos";

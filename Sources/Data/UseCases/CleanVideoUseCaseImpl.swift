@@ -16,6 +16,14 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
         videoURL: URL,
         settings: CleaningSettings
     ) async throws -> CleaningResult {
+        return try await execute(videoURL: videoURL, settings: settings, progressHandler: { _ in })
+    }
+    
+    public func execute(
+        videoURL: URL,
+        settings: CleaningSettings,
+        progressHandler: @escaping (Double) -> Void
+    ) async throws -> CleaningResult {
         
         let startTime = Date()
         
@@ -43,14 +51,16 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                 detectedMetadata = try await cleaner.cleanVideoFast(
                     from: videoURL,
                     outputURL: outputURL,
-                    settings: settings
+                    settings: settings,
+                    progressHandler: progressHandler
                 )
                 
             case .safeReencode:
                 detectedMetadata = try await cleaner.cleanVideoReencode(
                     from: videoURL,
                     outputURL: outputURL,
-                    settings: settings
+                    settings: settings,
+                    progressHandler: progressHandler
                 )
                 
             case .smartAuto:
@@ -59,7 +69,8 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                     detectedMetadata = try await cleaner.cleanVideoFast(
                         from: videoURL,
                         outputURL: outputURL,
-                        settings: settings
+                        settings: settings,
+                        progressHandler: progressHandler
                     )
                     
                     // Verify no sensitive metadata remains
@@ -72,7 +83,8 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                         detectedMetadata = try await cleaner.cleanVideoReencode(
                             from: videoURL,
                             outputURL: outputURL,
-                            settings: settings
+                            settings: settings,
+                            progressHandler: progressHandler
                         )
                     }
                 } catch {
@@ -81,7 +93,8 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                     detectedMetadata = try await cleaner.cleanVideoReencode(
                         from: videoURL,
                         outputURL: outputURL,
-                        settings: settings
+                        settings: settings,
+                        progressHandler: progressHandler
                     )
                 }
             }

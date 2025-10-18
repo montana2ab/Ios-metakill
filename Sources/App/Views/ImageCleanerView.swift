@@ -9,6 +9,7 @@ struct ImageCleanerView: View {
     @StateObject private var viewModel = ImageCleanerViewModel()
     @State private var showingPhotoPicker = false
     @State private var showingFilePicker = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         VStack(spacing: 20) {
@@ -67,6 +68,19 @@ struct ImageCleanerView: View {
                         Section(header: Text("image_cleaner.results".localized)) {
                             ForEach(viewModel.results) { result in
                                 ResultRow(result: result)
+                            }
+                        }
+                        
+                        Section {
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Label("common.return_home".localized, systemImage: "house.fill")
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10)
                             }
                         }
                     }
