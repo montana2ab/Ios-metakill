@@ -8,6 +8,7 @@ struct VideoCleanerView: View {
     @StateObject private var viewModel = VideoCleanerViewModel()
     @State private var showingPhotoPicker = false
     @State private var showingFilePicker = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         VStack(spacing: 20) {
@@ -66,6 +67,19 @@ struct VideoCleanerView: View {
                         Section(header: Text("video_cleaner.results".localized)) {
                             ForEach(viewModel.results) { result in
                                 ResultRow(result: result)
+                            }
+                        }
+                        
+                        Section {
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Label("common.return_home".localized, systemImage: "house.fill")
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.purple)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10)
                             }
                         }
                     }
@@ -154,6 +168,7 @@ final class VideoCleanerViewModel: ObservableObject {
     @Published var isProcessing = false
     @Published var progress: Double = 0
     @Published var currentIndex = 0
+    @Published var videoProgress: Double = 0  // Progress within current video
     
     private var task: Task<Void, Never>?
     
@@ -176,6 +191,7 @@ final class VideoCleanerViewModel: ObservableObject {
         isProcessing = false
         progress = 0
         currentIndex = 0
+        videoProgress = 0
     }
 
     private func runProcessing(settings: CleaningSettings) async {
@@ -183,6 +199,7 @@ final class VideoCleanerViewModel: ObservableObject {
             isProcessing = true
             progress = 0
             currentIndex = 0
+            videoProgress = 0
             results = []
         }
 
@@ -197,18 +214,27 @@ final class VideoCleanerViewModel: ObservableObject {
 
             await MainActor.run {
                 currentIndex = index + 1
+                videoProgress = 0
             }
 
             do {
                 let result = try await useCase.execute(
                     videoURL: item.sourceURL,
-                    settings: settings
+                    settings: settings,
+                    progressHandler: { [weak self] videoProgress in
+                        Task { @MainActor [weak self] in
+                            self?.videoProgress = videoProgress
+                            // Update overall progress: (completed videos + current video progress) / total videos
+                            self?.progress = (Double(index) + videoProgress) / Double(videos.count)
+                        }
+                    }
                 )
 
                 if Task.isCancelled { break }
 
                 await MainActor.run {
                     results.append(result)
+                    videoProgress = 1.0
                     progress = Double(currentIndex) / Double(videos.count)
                 }
             } catch {
@@ -220,6 +246,7 @@ final class VideoCleanerViewModel: ObservableObject {
                         state: .failed,
                         error: error.localizedDescription
                     ))
+                    videoProgress = 0
                     progress = Double(currentIndex) / Double(videos.count)
                 }
             }
@@ -228,6 +255,7 @@ final class VideoCleanerViewModel: ObservableObject {
         await MainActor.run {
             if Task.isCancelled {
                 progress = 0
+                videoProgress = 0
             }
             isProcessing = false
             task = nil

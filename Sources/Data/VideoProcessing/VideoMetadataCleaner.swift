@@ -47,7 +47,8 @@ public final class VideoMetadataCleaner {
     public func cleanVideoFast(
         from sourceURL: URL,
         outputURL: URL,
-        settings: CleaningSettings
+        settings: CleaningSettings,
+        progressHandler: @escaping (Double) -> Void = { _ in }
     ) async throws -> [MetadataInfo] {
         
         let asset = AVURLAsset(url: sourceURL)
@@ -78,7 +79,23 @@ public final class VideoMetadataCleaner {
         // Remove metadata by not including it in export
         exportSession.metadata = [] // Empty metadata
         
+        // Track progress during export
+        let progressTask = Task {
+            while exportSession.status == .waiting || exportSession.status == .exporting {
+                await MainActor.run {
+                    progressHandler(Double(exportSession.progress))
+                }
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+            }
+            if exportSession.status == .completed {
+                await MainActor.run {
+                    progressHandler(1.0)
+                }
+            }
+        }
+        
         await exportSession.export()
+        progressTask.cancel()
         
         if let error = exportSession.error {
             throw CleaningError.processingFailed("Export failed: \(error.localizedDescription)")
@@ -171,7 +188,8 @@ public final class VideoMetadataCleaner {
     public func cleanVideoReencode(
         from sourceURL: URL,
         outputURL: URL,
-        settings: CleaningSettings
+        settings: CleaningSettings,
+        progressHandler: @escaping (Double) -> Void = { _ in }
     ) async throws -> [MetadataInfo] {
         
         let asset = AVURLAsset(url: sourceURL)
@@ -212,13 +230,23 @@ public final class VideoMetadataCleaner {
         writer.startWriting()
         writer.startSession(atSourceTime: .zero)
         
+        // Get asset duration for progress tracking
+        let assetDuration = try await asset.load(.duration)
+        let totalSeconds = max(CMTimeGetSeconds(assetDuration), 0.001)
+        
         // Process tracks
         await withTaskGroup(of: Void.self) { group in
             // Copy video samples
             if let videoOutput = reader.outputs.first(where: { $0.mediaType == .video }) as? AVAssetReaderTrackOutput,
                let videoInput = writer.inputs.first(where: { $0.mediaType == .video }) {
                 group.addTask {
-                    await self.copyTrackSamples(from: videoOutput, to: videoInput, reader: reader)
+                    await self.copyTrackSamples(from: videoOutput, to: videoInput, reader: reader, isVideo: true) { pts in
+                        let current = CMTimeGetSeconds(pts)
+                        let ratio = max(0.0, min(current / totalSeconds, 0.99))
+                        Task { @MainActor in
+                            progressHandler(ratio)
+                        }
+                    }
                 }
             }
             
@@ -232,6 +260,11 @@ public final class VideoMetadataCleaner {
         }
         
         await writer.finishWriting()
+        
+        // Report completion
+        await MainActor.run {
+            progressHandler(1.0)
+        }
         
         if writer.status != .completed {
             if let error = writer.error {

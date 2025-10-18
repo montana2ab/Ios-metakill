@@ -33,6 +33,12 @@ public protocol CleanVideoUseCase {
         videoURL: URL,
         settings: CleaningSettings
     ) async throws -> CleaningResult
+    
+    func execute(
+        videoURL: URL,
+        settings: CleaningSettings,
+        progressHandler: @escaping (Double) -> Void
+    ) async throws -> CleaningResult
 }
 
 /// Use case for detecting metadata without cleaning
