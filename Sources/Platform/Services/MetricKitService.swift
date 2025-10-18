@@ -53,12 +53,12 @@ public final class MetricKitService: NSObject, MXMetricManagerSubscriber {
         // Log memory metrics
         if let memoryMetrics = payload.memoryMetrics {
             logger.info("Peak Memory: \(memoryMetrics.peakMemoryUsage.description)")
-            logger.info("Average Memory: \(memoryMetrics.averageSuspendedMemory?.description ?? "N/A")")
+            logger.info("Average Memory: \(memoryMetrics.averageSuspendedMemory.description)")
         }
         
         // Log display metrics
         if let displayMetrics = payload.displayMetrics {
-            logger.info("Average Pixel Luminance: \(displayMetrics.averagePixelLuminance.description)")
+            logger.info("Average Pixel Luminance: \(displayMetrics.averagePixelLuminance?.description ?? "N/A")")
         }
         
         // Log cellular condition metrics
