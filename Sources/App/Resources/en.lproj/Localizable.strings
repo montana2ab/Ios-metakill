@@ -126,6 +126,8 @@
 "results.delete_original_files" = "Delete Original Files";
 "results.delete_original_confirm_title" = "Delete Original Files?";
 "results.delete_original_confirm_message" = "This will permanently delete %d original file(s). This action cannot be undone.";
+"results.delete_success_title" = "Deletion Complete";
+"results.delete_success_message" = "Successfully deleted %d original file(s).";
 "results.original_deleted" = "Original file deleted";
 "results.deletion_failed" = "Failed to delete: %@";
 

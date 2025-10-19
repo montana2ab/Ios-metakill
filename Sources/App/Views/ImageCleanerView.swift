@@ -157,6 +157,11 @@ struct ImageCleanerView: View {
             let successCount = viewModel.results.filter { $0.success }.count
             Text("results.delete_original_confirm_message".localized(successCount))
         }
+        .alert("results.delete_success_title".localized, isPresented: $viewModel.showingDeleteSuccess) {
+            Button("common.ok".localized, role: .cancel) { }
+        } message: {
+            Text("results.delete_success_message".localized(viewModel.deletedCount))
+        }
     }
 }
 
@@ -262,6 +267,7 @@ final class ImageCleanerViewModel: ObservableObject {
     @Published var showingError = false
     @Published var errorMessage = ""
     @Published var showingDeleteConfirm = false
+    @Published var showingDeleteSuccess = false
     @Published var deletedCount = 0
     
     private var task: Task<Void, Never>?
@@ -299,6 +305,7 @@ final class ImageCleanerViewModel: ObservableObject {
             guard let self else { return }
             
             let storage = LocalStorageRepository()
+            var failedCount = 0
             
             for result in successfulResults {
                 do {
@@ -307,10 +314,18 @@ final class ImageCleanerViewModel: ObservableObject {
                         self.deletedCount += 1
                     }
                 } catch {
+                    failedCount += 1
                     await MainActor.run {
                         self.showingError = true
                         self.errorMessage = "results.deletion_failed".localized(error.localizedDescription)
                     }
+                }
+            }
+            
+            // Show success message if at least one file was deleted
+            await MainActor.run {
+                if self.deletedCount > 0 && failedCount == 0 {
+                    self.showingDeleteSuccess = true
                 }
             }
         }
