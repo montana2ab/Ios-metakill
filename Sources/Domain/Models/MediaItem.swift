@@ -11,6 +11,7 @@ public struct MediaItem: Identifiable, Codable {
     public let modificationDate: Date?
     public var isLivePhotoComponent: Bool
     public var livePhotoVideoURL: URL?
+    public var photoAssetIdentifier: String? // PHAsset localIdentifier for Photos library items
     
     public init(
         id: UUID = UUID(),
@@ -21,7 +22,8 @@ public struct MediaItem: Identifiable, Codable {
         creationDate: Date? = nil,
         modificationDate: Date? = nil,
         isLivePhotoComponent: Bool = false,
-        livePhotoVideoURL: URL? = nil
+        livePhotoVideoURL: URL? = nil,
+        photoAssetIdentifier: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -32,6 +34,7 @@ public struct MediaItem: Identifiable, Codable {
         self.modificationDate = modificationDate
         self.isLivePhotoComponent = isLivePhotoComponent
         self.livePhotoVideoURL = livePhotoVideoURL
+        self.photoAssetIdentifier = photoAssetIdentifier
     }
     
     public var formattedSize: String {

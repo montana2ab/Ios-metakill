@@ -52,12 +52,15 @@ public struct MediaLibraryPicker: UIViewControllerRepresentable {
                     // Check for Live Photo
                     let isLivePhoto = result.itemProvider.hasItemConformingToTypeIdentifier(UTType.livePhoto.identifier)
                     
+                    // Get the asset identifier if available
+                    let assetIdentifier = result.assetIdentifier
+                    
                     // Check if it's a video or image
                     if result.itemProvider.hasItemConformingToTypeIdentifier(UTType.movie.identifier) {
                         // It's a video
                         do {
                             if let url = try await self.loadVideo(from: result.itemProvider) {
-                                let item = try await self.createMediaItem(from: url, type: .video)
+                                let item = try await self.createMediaItem(from: url, type: .video, assetIdentifier: assetIdentifier)
                                 items.append(item)
                             }
                         } catch {
@@ -67,7 +70,7 @@ public struct MediaLibraryPicker: UIViewControllerRepresentable {
                         // It's an image
                         do {
                             if let url = try await self.loadImage(from: result.itemProvider) {
-                                let item = try await self.createMediaItem(from: url, type: .image, isLivePhoto: isLivePhoto)
+                                let item = try await self.createMediaItem(from: url, type: .image, isLivePhoto: isLivePhoto, assetIdentifier: assetIdentifier)
                                 items.append(item)
                             }
                         } catch {
@@ -152,7 +155,7 @@ public struct MediaLibraryPicker: UIViewControllerRepresentable {
             return nil
         }
         
-        private func createMediaItem(from url: URL, type: MediaType, isLivePhoto: Bool = false) async throws -> MediaItem {
+        private func createMediaItem(from url: URL, type: MediaType, isLivePhoto: Bool = false, assetIdentifier: String?) async throws -> MediaItem {
             let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
             let fileSize = attributes[.size] as? Int64 ?? 0
             let creationDate = attributes[.creationDate] as? Date
@@ -168,7 +171,8 @@ public struct MediaLibraryPicker: UIViewControllerRepresentable {
                 creationDate: creationDate,
                 modificationDate: modificationDate,
                 isLivePhotoComponent: isLivePhoto,
-                livePhotoVideoURL: nil
+                livePhotoVideoURL: nil,
+                photoAssetIdentifier: assetIdentifier
             )
         }
     }

@@ -49,11 +49,14 @@ public struct VideoLibraryPicker: UIViewControllerRepresentable {
                 var items: [MediaItem] = []
                 
                 for result in results {
+                    // Get the asset identifier if available
+                    let assetIdentifier = result.assetIdentifier
+                    
                     // Load the video
                     if result.itemProvider.hasItemConformingToTypeIdentifier(UTType.movie.identifier) {
                         do {
                             if let url = try await self.loadVideo(from: result.itemProvider) {
-                                let item = try await self.createMediaItem(from: url)
+                                let item = try await self.createMediaItem(from: url, assetIdentifier: assetIdentifier)
                                 items.append(item)
                             }
                         } catch {
@@ -102,7 +105,7 @@ public struct VideoLibraryPicker: UIViewControllerRepresentable {
             return nil
         }
         
-        private func createMediaItem(from url: URL) async throws -> MediaItem {
+        private func createMediaItem(from url: URL, assetIdentifier: String?) async throws -> MediaItem {
             let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
             let fileSize = attributes[.size] as? Int64 ?? 0
             let creationDate = attributes[.creationDate] as? Date
@@ -116,7 +119,8 @@ public struct VideoLibraryPicker: UIViewControllerRepresentable {
                 sourceURL: url,
                 fileSize: fileSize,
                 creationDate: creationDate,
-                modificationDate: modificationDate
+                modificationDate: modificationDate,
+                photoAssetIdentifier: assetIdentifier
             )
         }
     }

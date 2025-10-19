@@ -52,11 +52,14 @@ public struct PhotoLibraryPicker: UIViewControllerRepresentable {
                     // Check for Live Photo
                     let isLivePhoto = result.itemProvider.hasItemConformingToTypeIdentifier(UTType.livePhoto.identifier)
                     
+                    // Get the asset identifier if available
+                    let assetIdentifier = result.assetIdentifier
+                    
                     // Load the image
                     if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
                         do {
                             if let url = try await self.loadImage(from: result.itemProvider) {
-                                let item = try await self.createMediaItem(from: url, isLivePhoto: isLivePhoto)
+                                let item = try await self.createMediaItem(from: url, isLivePhoto: isLivePhoto, assetIdentifier: assetIdentifier)
                                 items.append(item)
                             }
                         } catch {
@@ -105,7 +108,7 @@ public struct PhotoLibraryPicker: UIViewControllerRepresentable {
             return nil
         }
         
-        private func createMediaItem(from url: URL, isLivePhoto: Bool) async throws -> MediaItem {
+        private func createMediaItem(from url: URL, isLivePhoto: Bool, assetIdentifier: String?) async throws -> MediaItem {
             let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
             let fileSize = attributes[.size] as? Int64 ?? 0
             let creationDate = attributes[.creationDate] as? Date
@@ -121,7 +124,8 @@ public struct PhotoLibraryPicker: UIViewControllerRepresentable {
                 creationDate: creationDate,
                 modificationDate: modificationDate,
                 isLivePhotoComponent: isLivePhoto,
-                livePhotoVideoURL: nil
+                livePhotoVideoURL: nil,
+                photoAssetIdentifier: assetIdentifier
             )
         }
     }
