@@ -75,6 +75,10 @@
 "settings.save_to_photo_library" = "Save to Camera Roll";
 "settings.delete_original_file" = "Delete Original File";
 "settings.delete_original_warning" = "Warning: This will permanently delete the original file after cleaning";
+"settings.delete_original_confirm_title" = "Delete Original Files?";
+"settings.delete_original_confirm_message" = "This will permanently delete the original files. This action cannot be undone.";
+"settings.confirm" = "Delete";
+"settings.cancel" = "Cancel";
 "settings.image_settings" = "Image Settings";
 "settings.convert_heic_to_jpeg" = "Convert HEIC to JPEG";
 "settings.heic_quality" = "HEIC Quality";
@@ -119,6 +123,11 @@
 "results.gps_removed" = "GPS data removed";
 "results.processing_time" = "Processing time: %.2fs";
 "results.metadata_types_removed" = "%d metadata types removed";
+"results.delete_original_files" = "Delete Original Files";
+"results.delete_original_confirm_title" = "Delete Original Files?";
+"results.delete_original_confirm_message" = "This will permanently delete %d original file(s). This action cannot be undone.";
+"results.original_deleted" = "Original file deleted";
+"results.deletion_failed" = "Failed to delete: %@";
 
 /* Common */
 "common.cancel" = "Cancel";

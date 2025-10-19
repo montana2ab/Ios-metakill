@@ -70,6 +70,10 @@
 "settings.save_to_photo_library" = "Sauvegarder dans la Pellicule";
 "settings.delete_original_file" = "Supprimer le Fichier Original";
 "settings.delete_original_warning" = "Attention : Cela supprimera définitivement le fichier original après nettoyage";
+"settings.delete_original_confirm_title" = "Supprimer les Fichiers Originaux ?";
+"settings.delete_original_confirm_message" = "Cela supprimera définitivement les fichiers originaux. Cette action est irréversible.";
+"settings.confirm" = "Supprimer";
+"settings.cancel" = "Annuler";
 "settings.image_settings" = "Paramètres d'Image";
 "settings.convert_heic_to_jpeg" = "Convertir HEIC en JPEG";
 "settings.heic_quality" = "Qualité HEIC";
@@ -114,12 +118,20 @@
 "results.gps_removed" = "Données GPS supprimées";
 "results.processing_time" = "Temps de traitement : %.2fs";
 "results.metadata_types_removed" = "%d types de métadonnées supprimés";
+"results.delete_original_files" = "Supprimer les Fichiers Originaux";
+"results.delete_original_confirm_title" = "Supprimer les Fichiers Originaux ?";
+"results.delete_original_confirm_message" = "Cela supprimera définitivement %d fichier(s) d'origine. Cette action est irréversible.";
+"results.original_deleted" = "Fichier original supprimé";
+"results.deletion_failed" = "Échec de suppression : %@";
 
 /* Common */
 "common.cancel" = "Annuler";
 "common.done" = "Terminé";
 "common.ok" = "OK";
 "common.error" = "Erreur";
+"common.image" = "Image";
+"common.video" = "Vidéo";
+"common.return_home" = "Retour à l'accueil";
 
 /* Placeholder Views */
 "picker.photo.title" = "Sélectionner des Photos";

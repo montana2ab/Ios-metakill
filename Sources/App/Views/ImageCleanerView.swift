@@ -71,6 +71,23 @@ struct ImageCleanerView: View {
                             }
                         }
                         
+                        // Delete original files button
+                        if viewModel.results.contains(where: { $0.success }) {
+                            Section {
+                                Button(action: {
+                                    viewModel.deleteOriginalFiles()
+                                }) {
+                                    Label("results.delete_original_files".localized, systemImage: "trash")
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Color.orange)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(10)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        
                         Section {
                             Button(action: {
                                 dismiss()
@@ -130,6 +147,15 @@ struct ImageCleanerView: View {
             Button("common.ok".localized, role: .cancel) { }
         } message: {
             Text(viewModel.errorMessage)
+        }
+        .alert("results.delete_original_confirm_title".localized, isPresented: $viewModel.showingDeleteConfirm) {
+            Button("common.cancel".localized, role: .cancel) { }
+            Button("results.delete_original_files".localized, role: .destructive) {
+                viewModel.confirmDeleteOriginalFiles()
+            }
+        } message: {
+            let successCount = viewModel.results.filter { $0.success }.count
+            Text("results.delete_original_confirm_message".localized(successCount))
         }
     }
 }
@@ -235,6 +261,8 @@ final class ImageCleanerViewModel: ObservableObject {
     @Published var currentIndex = 0
     @Published var showingError = false
     @Published var errorMessage = ""
+    @Published var showingDeleteConfirm = false
+    @Published var deletedCount = 0
     
     private var task: Task<Void, Never>?
     
@@ -257,6 +285,35 @@ final class ImageCleanerViewModel: ObservableObject {
         isProcessing = false
         progress = 0
         currentIndex = 0
+    }
+    
+    func deleteOriginalFiles() {
+        showingDeleteConfirm = true
+    }
+    
+    func confirmDeleteOriginalFiles() {
+        let successfulResults = results.filter { $0.success }
+        deletedCount = 0
+        
+        Task { [weak self] in
+            guard let self else { return }
+            
+            let storage = LocalStorageRepository()
+            
+            for result in successfulResults {
+                do {
+                    try await storage.deleteOriginal(mediaItem: result.mediaItem)
+                    await MainActor.run {
+                        self.deletedCount += 1
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.showingError = true
+                        self.errorMessage = "results.deletion_failed".localized(error.localizedDescription)
+                    }
+                }
+            }
+        }
     }
 
     private func runProcessing(settings: CleaningSettings) async {
