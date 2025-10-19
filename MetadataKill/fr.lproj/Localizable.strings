@@ -120,7 +120,7 @@
 "results.metadata_types_removed" = "%d types de métadonnées supprimés";
 "results.delete_original_files" = "Supprimer les Fichiers Originaux";
 "results.delete_original_confirm_title" = "Supprimer les Fichiers Originaux ?";
-"results.delete_original_confirm_message" = "Cela supprimera définitivement %d fichier(s) original(aux). Cette action est irréversible.";
+"results.delete_original_confirm_message" = "Cela supprimera définitivement %d fichier(s) d'origine. Cette action est irréversible.";
 "results.original_deleted" = "Fichier original supprimé";
 "results.deletion_failed" = "Échec de suppression : %@";
 
