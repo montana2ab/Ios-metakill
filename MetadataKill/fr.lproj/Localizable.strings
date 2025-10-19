@@ -121,6 +121,8 @@
 "results.delete_original_files" = "Supprimer les Fichiers Originaux";
 "results.delete_original_confirm_title" = "Supprimer les Fichiers Originaux ?";
 "results.delete_original_confirm_message" = "Cela supprimera définitivement %d fichier(s) d'origine. Cette action est irréversible.";
+"results.delete_success_title" = "Suppression Terminée";
+"results.delete_success_message" = "%d fichier(s) d'origine supprimé(s) avec succès.";
 "results.original_deleted" = "Fichier original supprimé";
 "results.deletion_failed" = "Échec de suppression : %@";
 

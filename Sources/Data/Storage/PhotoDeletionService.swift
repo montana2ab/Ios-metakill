@@ -41,6 +41,18 @@ struct PhotoDeletionService {
                                          completion: @escaping (Result<Void, Error>) -> Void) {
         func performDeletion() {
             let assets = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
+            
+            // Verify that we found the asset before attempting deletion
+            guard assets.count > 0 else {
+                DispatchQueue.main.async {
+                    let err = NSError(domain: "PhotoDeletionService",
+                                      code: -2,
+                                      userInfo: [NSLocalizedDescriptionKey: "Asset not found with identifier: \(localIdentifier)"])
+                    completion(.failure(err))
+                }
+                return
+            }
+            
             PHPhotoLibrary.shared().performChanges({
                 PHAssetChangeRequest.deleteAssets(assets)
             }, completionHandler: { success, error in
