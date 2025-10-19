@@ -3,7 +3,7 @@
 This checklist should be completed on an actual iOS device to verify the deletion bug fix works correctly.
 
 ## Prerequisites
-- [ ] iOS device with iOS 15.0 or later
+- [ ] iOS device with iOS 15.0 or later (as specified in Package.swift platforms)
 - [ ] Xcode project built and deployed to device
 - [ ] Photos permission granted to the app
 - [ ] Test photos/videos in Photos library
@@ -116,20 +116,21 @@ This checklist should be completed on an actual iOS device to verify the deletio
 - [ ] Delete originals for batch 2
 - [ ] **EXPECTED:** Each batch deletion works independently
 
-## Test 11: Auto-delete vs Manual Delete
-### With Auto-delete OFF:
+## Test 11: Manual Delete Button Visibility
+### With Auto-delete OFF (Manual delete mode):
 - [ ] Go to Settings
 - [ ] Ensure "Delete Original File" toggle is OFF
 - [ ] Process images
-- [ ] **EXPECTED:** Manual "Delete Original Files" button appears
-- [ ] **EXPECTED:** Can delete manually via button
+- [ ] **EXPECTED:** Manual "Delete Original Files" button appears in results
+- [ ] Click the button and confirm deletion
+- [ ] **EXPECTED:** Files are deleted successfully
 
-### With Auto-delete ON:
+### With Auto-delete ON (Verify button logic):
 - [ ] Go to Settings
 - [ ] Enable "Delete Original File" toggle
 - [ ] Process images
 - [ ] **EXPECTED:** Original files are deleted automatically during processing
-- [ ] **EXPECTED:** "Delete Original Files" button should NOT appear (nothing to delete)
+- [ ] **NOTE:** The manual "Delete Original Files" button may still appear since the button shows when there are successful results, but clicking it would attempt to delete already-deleted files (should show "asset not found" error)
 
 ## Performance Tests
 - [ ] Process and delete 10+ images in one batch
@@ -156,6 +157,8 @@ This checklist should be completed on an actual iOS device to verify the deletio
 - Take screenshots of any errors
 - Note performance issues (slow deletion, UI freezes)
 - Check iOS Console for any crash logs or errors
+  - Access via: Xcode > Window > Devices and Simulators > Select device > Open Console
+  - Or use Console.app on macOS and connect device
 
 ## Sign-off
 - [ ] All tests passed
