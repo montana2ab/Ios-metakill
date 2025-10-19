@@ -190,15 +190,33 @@ public final class LocalStorageRepository: StorageRepository {
     public func deleteOriginal(
         mediaItem: MediaItem
     ) async throws {
-        let fileURL = mediaItem.sourceURL
-        
-        // Only delete files in writable locations (not from photo library)
-        if isWritableLocation(fileURL) {
-            try fileManager.removeItem(at: fileURL)
+        // If the media item has a photo asset identifier, delete from Photos library
+        if let assetIdentifier = mediaItem.photoAssetIdentifier {
+            // Use PhotoDeletionService to delete from Photos library
+            return try await withCheckedThrowingContinuation { continuation in
+                #if canImport(Photos)
+                PhotoDeletionService.deleteOriginalIfNeeded(
+                    settings: CleaningSettings(deleteOriginalFile: true),
+                    source: .photoAsset(localIdentifier: assetIdentifier)
+                ) { result in
+                    switch result {
+                    case .success:
+                        continuation.resume()
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
+                }
+                #else
+                continuation.resume(throwing: CleaningError.processingFailed("Photos framework not available"))
+                #endif
+            }
+        } else {
+            // Delete file from file system if in writable location
+            let fileURL = mediaItem.sourceURL
+            if isWritableLocation(fileURL) {
+                try fileManager.removeItem(at: fileURL)
+            }
         }
-        // If the file is from the photo library, we should delete it from there
-        // This requires the PHAsset identifier which we don't currently track
-        // For now, we'll only delete files from file system locations
     }
 }
 
@@ -368,8 +386,13 @@ public final class LocalStorageRepository: StorageRepository {
     public func deleteOriginal(
         mediaItem: MediaItem
     ) async throws {
-        let fileURL = mediaItem.sourceURL
+        // If the media item has a photo asset identifier, we can't delete it (Photos not available)
+        if mediaItem.photoAssetIdentifier != nil {
+            throw CleaningError.processingFailed("Photos framework not available on this platform")
+        }
         
+        // Delete file from file system if in writable location
+        let fileURL = mediaItem.sourceURL
         if isWritableLocation(fileURL) {
             try fileManager.removeItem(at: fileURL)
         }

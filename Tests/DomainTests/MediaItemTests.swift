@@ -59,4 +59,52 @@ final class MediaItemTests: XCTestCase {
         XCTAssertFalse(result.success)
         XCTAssertEqual(result.error, "Test error")
     }
+    
+    func testMediaItemWithPhotoAssetIdentifier() {
+        let url = URL(fileURLWithPath: "/tmp/test.jpg")
+        let assetIdentifier = "ABC123-DEF456-GHI789"
+        
+        let item = MediaItem(
+            name: "test.jpg",
+            type: .image,
+            sourceURL: url,
+            fileSize: 1024 * 1024,
+            photoAssetIdentifier: assetIdentifier
+        )
+        
+        XCTAssertEqual(item.photoAssetIdentifier, assetIdentifier)
+    }
+    
+    func testMediaItemWithoutPhotoAssetIdentifier() {
+        let url = URL(fileURLWithPath: "/tmp/test.jpg")
+        
+        let item = MediaItem(
+            name: "test.jpg",
+            type: .image,
+            sourceURL: url,
+            fileSize: 1024 * 1024
+        )
+        
+        XCTAssertNil(item.photoAssetIdentifier)
+    }
+    
+    func testMediaItemCodingWithPhotoAssetIdentifier() throws {
+        let url = URL(fileURLWithPath: "/tmp/test.jpg")
+        let assetIdentifier = "ABC123-DEF456-GHI789"
+        
+        let original = MediaItem(
+            name: "test.jpg",
+            type: .image,
+            sourceURL: url,
+            fileSize: 1024 * 1024,
+            photoAssetIdentifier: assetIdentifier
+        )
+        
+        let encoded = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(MediaItem.self, from: encoded)
+        
+        XCTAssertEqual(decoded.photoAssetIdentifier, assetIdentifier)
+        XCTAssertEqual(decoded.name, original.name)
+        XCTAssertEqual(decoded.fileSize, original.fileSize)
+    }
 }
