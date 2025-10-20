@@ -140,6 +140,25 @@
 "common.video" = "Video";
 "common.return_home" = "Return to Home";
 
+/* Error Messages */
+"error.file_not_found" = "File not found";
+"error.file_not_found.recovery" = "Please ensure the file exists and try again.";
+"error.unsupported_format" = "Unsupported file format";
+"error.unsupported_format.recovery" = "Please select a supported image or video file format.";
+"error.corrupted_file" = "File is corrupted or unreadable";
+"error.corrupted_file.recovery" = "The file may be damaged. Try selecting a different file.";
+"error.insufficient_space" = "Insufficient storage space";
+"error.insufficient_space.recovery" = "Free up some space on your device and try again.";
+"error.drm_protected" = "File is DRM protected";
+"error.drm_protected.recovery" = "DRM protected files cannot be processed.";
+"error.processing_failed" = "Processing failed: %@";
+"error.processing_failed.recovery" = "Please try again or contact support if the problem persists.";
+"error.cancelled" = "Operation was cancelled";
+"error.network_required" = "Network connection required";
+"error.network_required.recovery" = "Connect to Wi-Fi or cellular data to download from iCloud.";
+"error.permission_denied" = "Permission denied";
+"error.permission_denied.recovery" = "Please grant the necessary permissions in Settings.";
+
 /* Placeholder Views */
 "picker.photo.title" = "Select Photos";
 "picker.photo.placeholder" = "Photo Picker - PhotoKit Integration Required";

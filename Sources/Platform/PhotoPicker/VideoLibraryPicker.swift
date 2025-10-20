@@ -60,7 +60,7 @@ public struct VideoLibraryPicker: UIViewControllerRepresentable {
                                 items.append(item)
                             }
                         } catch {
-                            print("Error loading video: \(error)")
+                            LoggingService.shared.logError("Failed to load video from photo library", category: .platform, error: error)
                         }
                     }
                 }

@@ -46,7 +46,7 @@ public struct MediaDocumentPicker: UIViewControllerRepresentable {
                 for url in urls {
                     // Start accessing security-scoped resource
                     guard url.startAccessingSecurityScopedResource() else {
-                        print("Failed to access security-scoped resource: \(url)")
+                        LoggingService.shared.logError("Failed to access security-scoped resource", category: .platform)
                         continue
                     }
                     
@@ -71,7 +71,7 @@ public struct MediaDocumentPicker: UIViewControllerRepresentable {
                         let item = try self.createMediaItem(from: tempURL, type: mediaType)
                         items.append(item)
                     } catch {
-                        print("Error processing document: \(error)")
+                        LoggingService.shared.logError("Error processing document", category: .platform, error: error)
                     }
                 }
                 

@@ -59,20 +59,39 @@ public struct CleaningSettings: Codable {
         self.saveToPhotoLibrary = saveToPhotoLibrary
         self.deleteOriginalFile = deleteOriginalFile
         self.heicToJPEG = heicToJPEG
-        self.heicQuality = heicQuality
-        self.jpegQuality = jpegQuality
+        // Validate quality values between 0.5 and 1.0
+        self.heicQuality = max(0.5, min(1.0, heicQuality))
+        self.jpegQuality = max(0.5, min(1.0, jpegQuality))
         self.forceSRGB = forceSRGB
         self.bakeOrientation = bakeOrientation
         self.videoProcessingMode = videoProcessingMode
         self.preserveHDR = preserveHDR
         self.enableThermalMonitoring = enableThermalMonitoring
-        self.maxConcurrentOperations = maxConcurrentOperations
+        // Validate concurrent operations between 1 and 8
+        self.maxConcurrentOperations = max(1, min(8, maxConcurrentOperations))
         self.enablePrivateLogging = enablePrivateLogging
         self.appLanguage = appLanguage
     }
     
     public static var `default`: CleaningSettings {
         CleaningSettings()
+    }
+    
+    /// Validate and normalize settings values to ensure they're within acceptable ranges
+    public mutating func validate() {
+        // Clamp quality values between 0.5 and 1.0
+        heicQuality = max(0.5, min(1.0, heicQuality))
+        jpegQuality = max(0.5, min(1.0, jpegQuality))
+        
+        // Clamp concurrent operations between 1 and 8
+        maxConcurrentOperations = max(1, min(8, maxConcurrentOperations))
+    }
+    
+    /// Return a validated copy of these settings
+    public func validated() -> CleaningSettings {
+        var copy = self
+        copy.validate()
+        return copy
     }
 }
 

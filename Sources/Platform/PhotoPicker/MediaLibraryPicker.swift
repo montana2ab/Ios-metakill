@@ -64,7 +64,7 @@ public struct MediaLibraryPicker: UIViewControllerRepresentable {
                                 items.append(item)
                             }
                         } catch {
-                            print("Error loading video: \(error)")
+                            LoggingService.shared.logError("Failed to load video from media library", category: .platform, error: error)
                         }
                     } else if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
                         // It's an image
@@ -74,7 +74,7 @@ public struct MediaLibraryPicker: UIViewControllerRepresentable {
                                 items.append(item)
                             }
                         } catch {
-                            print("Error loading image: \(error)")
+                            LoggingService.shared.logError("Failed to load image from media library", category: .platform, error: error)
                         }
                     }
                 }
