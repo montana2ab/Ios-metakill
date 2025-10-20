@@ -54,7 +54,7 @@ struct PhotoDeletionService {
             }
             
             PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.deleteAssets(assets)
+                PHAssetChangeRequest.deleteAssets(assets as NSFastEnumeration)
             }, completionHandler: { success, error in
                 DispatchQueue.main.async {
                     if let error = error {
