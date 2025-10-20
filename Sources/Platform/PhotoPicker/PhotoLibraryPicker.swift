@@ -63,7 +63,7 @@ public struct PhotoLibraryPicker: UIViewControllerRepresentable {
                                 items.append(item)
                             }
                         } catch {
-                            print("Error loading image: \(error)")
+                            LoggingService.shared.logError("Failed to load image from photo library", category: .platform, error: error)
                         }
                     }
                 }
