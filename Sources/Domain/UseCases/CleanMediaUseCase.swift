@@ -61,23 +61,46 @@ public enum CleaningError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .fileNotFound:
-            return "File not found"
+            return NSLocalizedString("error.file_not_found", comment: "File not found error")
         case .unsupportedFormat:
-            return "Unsupported file format"
+            return NSLocalizedString("error.unsupported_format", comment: "Unsupported file format error")
         case .corruptedFile:
-            return "File is corrupted or unreadable"
+            return NSLocalizedString("error.corrupted_file", comment: "Corrupted file error")
         case .insufficientSpace:
-            return "Insufficient storage space"
+            return NSLocalizedString("error.insufficient_space", comment: "Insufficient storage space error")
         case .drmProtected:
-            return "File is DRM protected"
+            return NSLocalizedString("error.drm_protected", comment: "DRM protected file error")
         case .processingFailed(let reason):
-            return "Processing failed: \(reason)"
+            return String(format: NSLocalizedString("error.processing_failed", comment: "Processing failed error"), reason)
         case .cancelled:
-            return "Operation was cancelled"
+            return NSLocalizedString("error.cancelled", comment: "Operation cancelled error")
         case .networkRequired:
-            return "Network connection required to download from iCloud"
+            return NSLocalizedString("error.network_required", comment: "Network required for iCloud error")
         case .permissionDenied:
-            return "Permission denied"
+            return NSLocalizedString("error.permission_denied", comment: "Permission denied error")
+        }
+    }
+    
+    public var recoverySuggestion: String? {
+        switch self {
+        case .fileNotFound:
+            return NSLocalizedString("error.file_not_found.recovery", comment: "File not found recovery suggestion")
+        case .unsupportedFormat:
+            return NSLocalizedString("error.unsupported_format.recovery", comment: "Unsupported format recovery suggestion")
+        case .corruptedFile:
+            return NSLocalizedString("error.corrupted_file.recovery", comment: "Corrupted file recovery suggestion")
+        case .insufficientSpace:
+            return NSLocalizedString("error.insufficient_space.recovery", comment: "Insufficient space recovery suggestion")
+        case .drmProtected:
+            return NSLocalizedString("error.drm_protected.recovery", comment: "DRM protected recovery suggestion")
+        case .processingFailed:
+            return NSLocalizedString("error.processing_failed.recovery", comment: "Processing failed recovery suggestion")
+        case .cancelled:
+            return nil
+        case .networkRequired:
+            return NSLocalizedString("error.network_required.recovery", comment: "Network required recovery suggestion")
+        case .permissionDenied:
+            return NSLocalizedString("error.permission_denied.recovery", comment: "Permission denied recovery suggestion")
         }
     }
 }

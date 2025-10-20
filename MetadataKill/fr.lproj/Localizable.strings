@@ -135,6 +135,25 @@
 "common.video" = "Vidéo";
 "common.return_home" = "Retour à l'accueil";
 
+/* Error Messages */
+"error.file_not_found" = "Fichier introuvable";
+"error.file_not_found.recovery" = "Veuillez vous assurer que le fichier existe et réessayer.";
+"error.unsupported_format" = "Format de fichier non pris en charge";
+"error.unsupported_format.recovery" = "Veuillez sélectionner un format d'image ou de vidéo pris en charge.";
+"error.corrupted_file" = "Le fichier est corrompu ou illisible";
+"error.corrupted_file.recovery" = "Le fichier peut être endommagé. Essayez de sélectionner un autre fichier.";
+"error.insufficient_space" = "Espace de stockage insuffisant";
+"error.insufficient_space.recovery" = "Libérez de l'espace sur votre appareil et réessayez.";
+"error.drm_protected" = "Le fichier est protégé par DRM";
+"error.drm_protected.recovery" = "Les fichiers protégés par DRM ne peuvent pas être traités.";
+"error.processing_failed" = "Échec du traitement : %@";
+"error.processing_failed.recovery" = "Veuillez réessayer ou contacter le support si le problème persiste.";
+"error.cancelled" = "Opération annulée";
+"error.network_required" = "Connexion réseau requise";
+"error.network_required.recovery" = "Connectez-vous au Wi-Fi ou aux données cellulaires pour télécharger depuis iCloud.";
+"error.permission_denied" = "Permission refusée";
+"error.permission_denied.recovery" = "Veuillez accorder les autorisations nécessaires dans Réglages.";
+
 /* Placeholder Views */
 "picker.photo.title" = "Sélectionner des Photos";
 "picker.photo.placeholder" = "Sélecteur de Photos - Intégration PhotoKit Requise";
