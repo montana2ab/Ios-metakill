@@ -83,11 +83,11 @@ let archiveSettings = CleaningSettings(
     outputMode: .newCopyWithTimestamp
 )
 
-// Validation is automatic
-let invalidSettings = CleaningSettings(
-    heicQuality: 2.0,  // Automatically clamped to 1.0
-    jpegQuality: -0.5, // Automatically clamped to 0.5
-    maxConcurrentOperations: 100 // Automatically clamped to 8
+// Validation is automatic - invalid values are clamped to valid ranges
+let settings = CleaningSettings(
+    heicQuality: 2.0,  // Will be clamped to 1.0 (max)
+    jpegQuality: -0.5, // Will be clamped to 0.5 (min is 50%)
+    maxConcurrentOperations: 100 // Will be clamped to 8
 )
 ```
 
