@@ -44,6 +44,28 @@ public final class VideoMetadataCleaner {
     public init() {}
     
     /// Clean video metadata using re-muxing (no re-encoding)
+    ///
+    /// This is the fastest method for removing video metadata as it re-muxes the video
+    /// without re-encoding the video/audio streams. This preserves perfect quality and
+    /// is significantly faster than re-encoding (typically 10-100x faster depending on file size).
+    ///
+    /// **Performance Characteristics:**
+    /// - Speed: ~I/O limited (as fast as your storage can read/write)
+    /// - Quality: Lossless (no re-encoding)
+    /// - CPU Usage: Low (no codec work)
+    /// - Best for: Most videos where metadata is only in container headers
+    ///
+    /// **Limitations:**
+    /// - May not remove all metadata if it's embedded in video/audio streams
+    /// - For those cases, use `cleanVideoReencode()` instead
+    ///
+    /// - Parameters:
+    ///   - sourceURL: URL of the source video file
+    ///   - outputURL: URL where cleaned video will be written
+    ///   - settings: Cleaning configuration
+    ///   - progressHandler: Callback for progress updates (0.0 to 1.0)
+    /// - Returns: Array of detected metadata types
+    /// - Throws: CleaningError if export fails
     public func cleanVideoFast(
         from sourceURL: URL,
         outputURL: URL,
@@ -53,10 +75,11 @@ public final class VideoMetadataCleaner {
         
         let asset = AVURLAsset(url: sourceURL)
         
-        // Detect metadata
+        // Detect metadata before cleaning so we can report what was removed
         let detectedMetadata = try await detectMetadata(in: asset)
         
         // Create export session for re-muxing
+        // AVAssetExportPresetPassthrough = copy streams without re-encoding
         guard let exportSession = AVAssetExportSession(
             asset: asset,
             presetName: AVAssetExportPresetPassthrough
@@ -67,24 +90,30 @@ public final class VideoMetadataCleaner {
         exportSession.outputURL = outputURL
         exportSession.outputFileType = determineOutputFileType(from: sourceURL)
         
-        // Remove existing output file if present
+        // Remove existing output file if present (export will fail if file exists)
         try? FileManager.default.removeItem(at: outputURL)
         
-        // Optimize and filter metadata for sharing
+        // Optimize for sharing and strip metadata
+        // shouldOptimizeForNetworkUse moves the moov atom to the beginning for faster streaming
         exportSession.shouldOptimizeForNetworkUse = true
+        
+        // On iOS 16+, use metadata filter to remove sharing-inappropriate metadata
         if #available(iOS 16.0, *) {
             exportSession.metadataItemFilter = .forSharing()
         }
         
-        // Remove metadata by not including it in export
-        exportSession.metadata = [] // Empty metadata
+        // Remove all metadata by providing an empty array
+        // This prevents metadata from being copied to the output file
+        exportSession.metadata = []
         
         // Track progress during export
+        // Progress updates are sent to the main actor for UI updates
         let progressTask = Task {
             while exportSession.status == .waiting || exportSession.status == .exporting {
                 await MainActor.run {
                     progressHandler(Double(exportSession.progress))
                 }
+                // Poll every 100ms - balance between responsiveness and CPU usage
                 try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
             }
             if exportSession.status == .completed {
@@ -94,14 +123,17 @@ public final class VideoMetadataCleaner {
             }
         }
         
+        // Perform the actual export asynchronously
         await exportSession.export()
+        
+        // Clean up the progress tracking task
         progressTask.cancel()
         
         if let error = exportSession.error {
             throw CleaningError.processingFailed("Export failed: \(error.localizedDescription)")
         }
         
-        // Verify the output
+        // Verify the output file is valid and metadata was actually removed
         try await verifyCleanVideo(at: outputURL, originalAsset: asset)
         
         return detectedMetadata

@@ -156,15 +156,37 @@ public final class ImageMetadataCleaner {
     }
     
     /// Bake orientation into image pixels
+    ///
+    /// EXIF orientation values range from 1-8, representing different rotations and flips:
+    /// - 1: Normal (no rotation)
+    /// - 2: Flipped horizontally
+    /// - 3: Rotated 180°
+    /// - 4: Flipped vertically
+    /// - 5: Rotated 90° CW and flipped horizontally
+    /// - 6: Rotated 90° CW
+    /// - 7: Rotated 90° CCW and flipped horizontally
+    /// - 8: Rotated 90° CCW
+    ///
+    /// This method applies the transformation directly to the pixel data, so the image
+    /// displays correctly even when the orientation metadata is removed.
+    ///
+    /// - Parameters:
+    ///   - image: The source CGImage to rotate
+    ///   - orientation: EXIF orientation value (1-8)
+    /// - Returns: A new CGImage with orientation baked into pixels
+    /// - Throws: CleaningError if context creation or image generation fails
     private func bakeOrientation(_ image: CGImage, orientation: UInt32) throws -> CGImage {
         let width = image.width
         let height = image.height
         
         // Determine new dimensions based on orientation
+        // Orientations 5-8 involve 90° or 270° rotation, which swap width and height
         let needsSwap = orientation >= 5 && orientation <= 8
         let newWidth = needsSwap ? height : width
         let newHeight = needsSwap ? width : height
         
+        // Create a graphics context with the new dimensions
+        // Using the original image's color space and bit depth to preserve quality
         guard let colorSpace = image.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB),
               let context = CGContext(
                 data: nil,
@@ -178,8 +200,13 @@ public final class ImageMetadataCleaner {
             throw CleaningError.processingFailed("Cannot create CGContext for orientation baking")
         }
         
-        // Apply transformation based on orientation
+        // Apply the appropriate transformation matrix for this orientation
+        // The transformation is applied in reverse because we're transforming the coordinate system,
+        // not the image itself
         context.concatenate(transformForOrientation(orientation, width: width, height: height))
+        
+        // Draw the original image into the transformed context
+        // The image will be drawn with the correct orientation
         context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
         
         guard let rotatedImage = context.makeImage() else {
@@ -189,34 +216,59 @@ public final class ImageMetadataCleaner {
         return rotatedImage
     }
     
+    /// Generate the appropriate affine transformation matrix for a given EXIF orientation
+    ///
+    /// Each orientation requires a specific combination of translation, rotation, and scaling
+    /// to correctly position the image in the new coordinate system.
+    ///
+    /// - Parameters:
+    ///   - orientation: EXIF orientation value (1-8)
+    ///   - width: Original image width
+    ///   - height: Original image height
+    /// - Returns: CGAffineTransform that applies the correct transformation
     private func transformForOrientation(_ orientation: UInt32, width: Int, height: Int) -> CGAffineTransform {
         var transform = CGAffineTransform.identity
         
         switch orientation {
-        case 2: // Flip horizontal
+        case 2: // Flip horizontal (mirror)
+            // Move origin to right edge, then flip horizontally
             transform = transform.translatedBy(x: CGFloat(width), y: 0)
             transform = transform.scaledBy(x: -1, y: 1)
-        case 3: // Rotate 180
+            
+        case 3: // Rotate 180° (upside down)
+            // Move origin to bottom-right, then rotate 180°
             transform = transform.translatedBy(x: CGFloat(width), y: CGFloat(height))
             transform = transform.rotated(by: .pi)
-        case 4: // Flip vertical
+            
+        case 4: // Flip vertical (upside down mirror)
+            // Move origin to bottom edge, then flip vertically
             transform = transform.translatedBy(x: 0, y: CGFloat(height))
             transform = transform.scaledBy(x: 1, y: -1)
-        case 5: // Rotate 90 CW and flip
+            
+        case 5: // Rotate 90° CW and flip horizontal
+            // Combination of rotation and horizontal flip
             transform = transform.translatedBy(x: CGFloat(height), y: 0)
             transform = transform.rotated(by: .pi / 2)
             transform = transform.scaledBy(x: 1, y: -1)
-        case 6: // Rotate 90 CW
+            
+        case 6: // Rotate 90° CW (landscape right)
+            // Move origin to top-right, then rotate -90° (same as 270° CCW)
             transform = transform.translatedBy(x: 0, y: CGFloat(width))
             transform = transform.rotated(by: -.pi / 2)
-        case 7: // Rotate 90 CCW and flip
+            
+        case 7: // Rotate 90° CCW and flip horizontal
+            // Combination of counter-clockwise rotation and horizontal flip
             transform = transform.translatedBy(x: 0, y: CGFloat(width))
             transform = transform.rotated(by: -.pi / 2)
             transform = transform.scaledBy(x: 1, y: -1)
-        case 8: // Rotate 90 CCW
+            
+        case 8: // Rotate 90° CCW (landscape left)
+            // Move origin to bottom-left, then rotate 90° CW (same as 270° CW)
             transform = transform.translatedBy(x: CGFloat(height), y: 0)
             transform = transform.rotated(by: .pi / 2)
+            
         default:
+            // Orientation 1 or invalid: no transformation needed
             break
         }
         
@@ -224,12 +276,20 @@ public final class ImageMetadataCleaner {
     }
     
     /// Convert image to sRGB color space
+    ///
+    /// Display P3 color space can contain colors outside the sRGB gamut, which may not
+    /// display correctly on all devices or when shared to other platforms. This method
+    /// converts the image to the standard sRGB color space for maximum compatibility.
+    ///
+    /// - Parameter image: The source CGImage (may be in any color space)
+    /// - Returns: A new CGImage in sRGB color space
+    /// - Throws: CleaningError if color space creation or conversion fails
     private func convertToSRGB(_ image: CGImage) throws -> CGImage {
         guard let srgbColorSpace = CGColorSpace(name: CGColorSpace.sRGB) else {
             throw CleaningError.processingFailed("Cannot create sRGB color space")
         }
         
-        // If already sRGB, return as-is
+        // Optimization: If already sRGB, return as-is to avoid unnecessary processing
         if let currentColorSpace = image.colorSpace,
            currentColorSpace.name == CGColorSpace.sRGB {
             return image
@@ -238,6 +298,8 @@ public final class ImageMetadataCleaner {
         let width = image.width
         let height = image.height
         
+        // Create a new context in sRGB color space
+        // Using 8 bits per component and premultiplied alpha for standard RGB processing
         guard let context = CGContext(
             data: nil,
             width: width,
