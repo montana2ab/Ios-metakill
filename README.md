@@ -507,11 +507,25 @@ Ios-metakill/
 ## 📚 Documentation
 
 ### English Documentation
+
+#### For Users
+- **[README](README.md)** - Project overview and features
+- **[Quick Start](QUICKSTART.md)** - Getting started guide
+- **[Privacy Policy](PRIVACY.md)** - Privacy and data handling information
+- **[Beta Testing Guide](BETA_TESTING_GUIDE.md)** - How to participate in beta testing
+
+#### For Developers
+- **[Developer Onboarding](DEVELOPER_ONBOARDING.md)** - Complete onboarding guide for new developers
+- **[API Documentation](API_DOCUMENTATION.md)** - Detailed API reference with code examples
 - **[Architecture Guide](ARCHITECTURE.md)** - Detailed architecture and design patterns
 - **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
-- **[Privacy Policy](PRIVACY.md)** - Privacy and data handling information
-- **[Quick Start](QUICKSTART.md)** - Getting started guide
+- **[Testing Guide](TESTING_GUIDE.md)** - Testing best practices and guidelines
 - **[Package Resolution](PACKAGE_RESOLUTION.md)** - Troubleshooting package issues
+
+#### Technical Deep Dives
+- **[Video Processing](VIDEO_PROCESSING.md)** - Video metadata removal implementation
+- **[Live Photos](LIVE_PHOTOS.md)** - Live Photo processing details
+- **[PhotoKit Integration](PHOTOKIT_INTEGRATION.md)** - Photo library integration guide
 
 ### Documentation Française
 - **[Guide d'Architecture](ARCHITECTURE_FR.md)** - Architecture détaillée et patterns de conception
