@@ -73,7 +73,11 @@ public final class VideoMetadataCleaner {
         progressHandler: @escaping (Double) -> Void = { _ in }
     ) async throws -> [MetadataInfo] {
         
-        let asset = AVURLAsset(url: sourceURL)
+        // Use URL asset with optimized loading options
+        let options: [String: Any] = [
+            AVURLAssetPreferPreciseDurationAndTimingKey: false  // Faster loading for metadata operations
+        ]
+        let asset = AVURLAsset(url: sourceURL, options: options)
         
         // Detect metadata before cleaning so we can report what was removed
         let detectedMetadata = try await detectMetadata(in: asset)
@@ -106,15 +110,15 @@ public final class VideoMetadataCleaner {
         // This prevents metadata from being copied to the output file
         exportSession.metadata = []
         
-        // Track progress during export
+        // Track progress during export with optimized polling interval
         // Progress updates are sent to the main actor for UI updates
         let progressTask = Task {
             while exportSession.status == .waiting || exportSession.status == .exporting {
                 await MainActor.run {
                     progressHandler(Double(exportSession.progress))
                 }
-                // Poll every 100ms - balance between responsiveness and CPU usage
-                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+                // Poll every 200ms - balance between responsiveness and CPU usage (reduced from 100ms)
+                try? await Task.sleep(nanoseconds: 200_000_000) // 0.2s
             }
             if exportSession.status == .completed {
                 await MainActor.run {
@@ -181,7 +185,7 @@ public final class VideoMetadataCleaner {
             Task {
                 while exportSession.status == .waiting || exportSession.status == .exporting {
                     continuation.yield(Double(exportSession.progress))
-                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s
+                    try? await Task.sleep(nanoseconds: 200_000_000) // 0.2s - optimized polling interval
                 }
                 // Yield final state
                 if exportSession.status == .completed {

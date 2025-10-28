@@ -38,7 +38,7 @@ struct ContentView: View {
     
     private var homeContent: some View {
         ScrollView {
-            VStack(spacing: 0) {
+            LazyVStack(spacing: 0) {
                 // Hero Section with Enhanced Gradient
                 ZStack {
                     // Multi-layer gradient for depth
@@ -189,7 +189,7 @@ struct ContentView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 28)
                 
-                // Recent Activity
+                // Recent Activity (lazy loaded)
                 if !viewModel.recentResults.isEmpty {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("home.recent".localized)
@@ -198,7 +198,7 @@ struct ContentView: View {
                             .padding(.horizontal)
                         
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 14) {
+                            LazyHStack(spacing: 14) {
                                 ForEach(viewModel.recentResults.prefix(5)) { result in
                                     RecentItemCard(result: result)
                                 }

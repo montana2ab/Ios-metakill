@@ -16,7 +16,13 @@ public final class ImageMetadataCleaner {
         settings: CleaningSettings
     ) async throws -> (data: Data, detectedMetadata: [MetadataInfo]) {
         
-        guard let imageSource = CGImageSourceCreateWithURL(sourceURL as CFURL, nil) else {
+        // Create image source with optimized options for better performance
+        let options: [CFString: Any] = [
+            kCGImageSourceShouldCache: false,  // Don't cache to reduce memory usage
+            kCGImageSourceShouldAllowFloat: true
+        ]
+        
+        guard let imageSource = CGImageSourceCreateWithURL(sourceURL as CFURL, options as CFDictionary) else {
             throw CleaningError.processingFailed("Cannot create image source")
         }
         
@@ -34,8 +40,13 @@ public final class ImageMetadataCleaner {
         // Get orientation
         let orientation = (properties[kCGImagePropertyOrientation as String] as? UInt32) ?? 1
         
-        // Create CGImage
-        guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
+        // Create CGImage with optimized options
+        let imageOptions: [CFString: Any] = [
+            kCGImageSourceShouldCacheImmediately: false,
+            kCGImageSourceShouldAllowFloat: true
+        ]
+        
+        guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, imageOptions as CFDictionary) else {
             throw CleaningError.processingFailed("Cannot create CGImage")
         }
         

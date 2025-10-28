@@ -279,6 +279,7 @@ final class BatchProcessorViewModel: ObservableObject {
             errorMessage = ""
         }
 
+        // Lazy initialization - create cleaners and use cases once
         let imageCleaner = ImageMetadataCleaner()
         let videoCleaner = VideoMetadataCleaner()
         let storage = LocalStorageRepository()
@@ -286,54 +287,111 @@ final class BatchProcessorViewModel: ObservableObject {
         let videoUseCase = CleanVideoUseCaseImpl(cleaner: videoCleaner, storage: storage)
 
         let items = await MainActor.run { self.items }
-
-        for (index, item) in items.enumerated() {
-            if Task.isCancelled { break }
-
-            await MainActor.run {
-                currentIndex = index + 1
+        
+        // Process items with controlled concurrency (2 at a time to balance speed and memory)
+        let maxConcurrentTasks = 2
+        var processedCount = 0
+        
+        await withTaskGroup(of: (Int, CleaningResult).self) { group in
+            var nextIndex = 0
+            
+            // Start initial batch
+            for _ in 0..<min(maxConcurrentTasks, items.count) {
+                if nextIndex < items.count {
+                    let index = nextIndex
+                    let item = items[index]
+                    nextIndex += 1
+                    
+                    group.addTask {
+                        do {
+                            let result: CleaningResult
+                            
+                            switch item.type {
+                            case .image:
+                                result = try await imageUseCase.execute(
+                                    mediaItem: item,
+                                    settings: settings
+                                )
+                            case .video:
+                                result = try await videoUseCase.execute(
+                                    mediaItem: item,
+                                    settings: settings
+                                )
+                            @unknown default:
+                                throw NSError(
+                                    domain: "BatchProcessorView",
+                                    code: -1,
+                                    userInfo: [NSLocalizedDescriptionKey: "Unsupported media type"]
+                                )
+                            }
+                            
+                            return (index, result)
+                        } catch {
+                            return (index, CleaningResult(
+                                mediaItem: item,
+                                state: .failed,
+                                error: error.localizedDescription
+                            ))
+                        }
+                    }
+                }
             }
-
-            do {
-                let result: CleaningResult
-
-                switch item.type {
-                case .image:
-                    result = try await imageUseCase.execute(
-                        mediaItem: item,
-                        settings: settings
-                    )
-                case .video:
-                    result = try await videoUseCase.execute(
-                        mediaItem: item,
-                        settings: settings
-                    )
-                @unknown default:
-                    throw NSError(
-                        domain: "BatchProcessorView",
-                        code: -1,
-                        userInfo: [NSLocalizedDescriptionKey: "Unsupported media type"]
-                    )
-                }
-
+            
+            // Process results as they complete and start new tasks
+            for await (index, result) in group {
                 if Task.isCancelled { break }
-
+                
+                processedCount += 1
+                
                 await MainActor.run {
-                    results.append(result)
-                    progress = Double(currentIndex) / Double(items.count)
+                    self.results.append(result)
+                    self.currentIndex = processedCount
+                    self.progress = Double(processedCount) / Double(items.count)
+                    
+                    if !result.success, let error = result.error {
+                        self.showingError = true
+                        self.errorMessage = error
+                    }
                 }
-            } catch {
-                if Task.isCancelled || error is CancellationError { break }
-
-                await MainActor.run {
-                    results.append(CleaningResult(
-                        mediaItem: item,
-                        state: .failed,
-                        error: error.localizedDescription
-                    ))
-                    progress = Double(currentIndex) / Double(items.count)
-                    showingError = true
-                    errorMessage = error.localizedDescription
+                
+                // Start next task if available
+                if nextIndex < items.count && !Task.isCancelled {
+                    let nextItemIndex = nextIndex
+                    let item = items[nextItemIndex]
+                    nextIndex += 1
+                    
+                    group.addTask {
+                        do {
+                            let result: CleaningResult
+                            
+                            switch item.type {
+                            case .image:
+                                result = try await imageUseCase.execute(
+                                    mediaItem: item,
+                                    settings: settings
+                                )
+                            case .video:
+                                result = try await videoUseCase.execute(
+                                    mediaItem: item,
+                                    settings: settings
+                                )
+                            @unknown default:
+                                throw NSError(
+                                    domain: "BatchProcessorView",
+                                    code: -1,
+                                    userInfo: [NSLocalizedDescriptionKey: "Unsupported media type"]
+                                )
+                            }
+                            
+                            return (nextItemIndex, result)
+                        } catch {
+                            return (nextItemIndex, CleaningResult(
+                                mediaItem: item,
+                                state: .failed,
+                                error: error.localizedDescription
+                            ))
+                        }
+                    }
                 }
             }
         }

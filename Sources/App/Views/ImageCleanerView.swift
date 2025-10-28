@@ -341,43 +341,83 @@ final class ImageCleanerViewModel: ObservableObject {
             errorMessage = ""
         }
 
+        // Lazy initialization - create cleaner and use case once
         let cleaner = ImageMetadataCleaner()
         let storage = LocalStorageRepository()
         let useCase = CleanImageUseCaseImpl(cleaner: cleaner, storage: storage)
 
         let images = await MainActor.run { selectedImages }
-
-        for (index, item) in images.enumerated() {
-            if Task.isCancelled { break }
-
-            await MainActor.run {
-                currentIndex = index + 1
-            }
-
-            do {
-                let result = try await useCase.execute(
-                    mediaItem: item,
-                    settings: settings
-                )
-
-                if Task.isCancelled { break }
-
-                await MainActor.run {
-                    results.append(result)
-                    progress = Double(currentIndex) / Double(images.count)
+        
+        // Process images with controlled concurrency (3 at a time for images since they're typically faster than videos)
+        let maxConcurrentTasks = 3
+        var processedCount = 0
+        
+        await withTaskGroup(of: (Int, CleaningResult).self) { group in
+            var nextIndex = 0
+            
+            // Start initial batch
+            for _ in 0..<min(maxConcurrentTasks, images.count) {
+                if nextIndex < images.count {
+                    let index = nextIndex
+                    let item = images[index]
+                    nextIndex += 1
+                    
+                    group.addTask {
+                        do {
+                            let result = try await useCase.execute(
+                                mediaItem: item,
+                                settings: settings
+                            )
+                            return (index, result)
+                        } catch {
+                            return (index, CleaningResult(
+                                mediaItem: item,
+                                state: .failed,
+                                error: error.localizedDescription
+                            ))
+                        }
+                    }
                 }
-            } catch {
-                if Task.isCancelled || error is CancellationError { break }
-
+            }
+            
+            // Process results as they complete and start new tasks
+            for await (_, result) in group {
+                if Task.isCancelled { break }
+                
+                processedCount += 1
+                
                 await MainActor.run {
-                    results.append(CleaningResult(
-                        mediaItem: item,
-                        state: .failed,
-                        error: error.localizedDescription
-                    ))
-                    progress = Double(currentIndex) / Double(images.count)
-                    showingError = true
-                    errorMessage = error.localizedDescription
+                    self.results.append(result)
+                    self.currentIndex = processedCount
+                    self.progress = Double(processedCount) / Double(images.count)
+                    
+                    if !result.success, let error = result.error {
+                        self.showingError = true
+                        self.errorMessage = error
+                    }
+                }
+                
+                // Start next task if available
+                if nextIndex < images.count && !Task.isCancelled {
+                    let nextItemIndex = nextIndex
+                    let item = images[nextItemIndex]
+                    nextIndex += 1
+                    
+                    group.addTask {
+                        do {
+                            let result = try await useCase.execute(
+                                mediaItem: item,
+                                settings: settings
+                            )
+                            return (nextItemIndex, result)
+                        } catch {
+                            return (nextItemIndex, CleaningResult(
+                                mediaItem: item,
+                                state: .failed,
+                                error: error.localizedDescription
+                            ))
+                        }
+                    }
                 }
             }
         }
