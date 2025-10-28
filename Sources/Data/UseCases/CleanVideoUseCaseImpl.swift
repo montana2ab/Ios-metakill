@@ -13,28 +13,19 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
     }
     
     public func execute(
-        videoURL: URL,
+        mediaItem: MediaItem,
         settings: CleaningSettings
     ) async throws -> CleaningResult {
-        return try await execute(videoURL: videoURL, settings: settings, progressHandler: { _ in })
+        return try await execute(mediaItem: mediaItem, settings: settings, progressHandler: { _ in })
     }
     
     public func execute(
-        videoURL: URL,
+        mediaItem: MediaItem,
         settings: CleaningSettings,
         progressHandler: @escaping (Double) -> Void
     ) async throws -> CleaningResult {
         
         let startTime = Date()
-        
-        // Create media item
-        let fileSize = try fileSize(at: videoURL)
-        let mediaItem = MediaItem(
-            name: videoURL.lastPathComponent,
-            type: .video,
-            sourceURL: videoURL,
-            fileSize: fileSize
-        )
         
         do {
             // Generate output URL
@@ -49,7 +40,7 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
             switch settings.videoProcessingMode {
             case .fastCopy:
                 detectedMetadata = try await cleaner.cleanVideoFast(
-                    from: videoURL,
+                    from: mediaItem.sourceURL,
                     outputURL: outputURL,
                     settings: settings,
                     progressHandler: progressHandler
@@ -57,7 +48,7 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                 
             case .safeReencode:
                 detectedMetadata = try await cleaner.cleanVideoReencode(
-                    from: videoURL,
+                    from: mediaItem.sourceURL,
                     outputURL: outputURL,
                     settings: settings,
                     progressHandler: progressHandler
@@ -67,7 +58,7 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                 // Try fast copy first
                 do {
                     detectedMetadata = try await cleaner.cleanVideoFast(
-                        from: videoURL,
+                        from: mediaItem.sourceURL,
                         outputURL: outputURL,
                         settings: settings,
                         progressHandler: progressHandler
@@ -81,7 +72,7 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                         
                         // Re-encode
                         detectedMetadata = try await cleaner.cleanVideoReencode(
-                            from: videoURL,
+                            from: mediaItem.sourceURL,
                             outputURL: outputURL,
                             settings: settings,
                             progressHandler: progressHandler
@@ -91,7 +82,7 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
                     // Fast copy failed, try re-encode
                     try? FileManager.default.removeItem(at: outputURL)
                     detectedMetadata = try await cleaner.cleanVideoReencode(
-                        from: videoURL,
+                        from: mediaItem.sourceURL,
                         outputURL: outputURL,
                         settings: settings,
                         progressHandler: progressHandler
@@ -101,7 +92,7 @@ public final class CleanVideoUseCaseImpl: CleanVideoUseCase {
             
             // Preserve file date if requested
             if settings.preserveFileDate,
-               let modificationDate = try? FileManager.default.attributesOfItem(atPath: videoURL.path)[.modificationDate] as? Date {
+               let modificationDate = try? FileManager.default.attributesOfItem(atPath: mediaItem.sourceURL.path)[.modificationDate] as? Date {
                 try FileManager.default.setAttributes(
                     [.modificationDate: modificationDate],
                     ofItemAtPath: outputURL.path
