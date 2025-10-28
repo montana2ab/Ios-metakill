@@ -2,6 +2,8 @@
 
 Thank you for your interest in contributing to MetadataKill! This document provides guidelines and information for contributors.
 
+**Project Author:** Anthony Jodar
+
 ## Table of Contents
 
 - [Code of Conduct](#code-of-conduct)
@@ -374,7 +376,11 @@ Update README when:
 
 Contributors will be:
 - Listed in release notes
-- Acknowledged in CONTRIBUTORS.md
+- Acknowledged in [AUTHORS.md](AUTHORS.md)
 - Credited for significant contributions
+
+All contributions are appreciated and help make MetadataKill better for everyone.
+
+**Project created and maintained by Anthony Jodar.**
 
 Thank you for contributing to MetadataKill! 🙏
