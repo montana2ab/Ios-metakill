@@ -298,7 +298,7 @@ final class VideoCleanerViewModel: ObservableObject {
 
             do {
                 let result = try await useCase.execute(
-                    videoURL: item.sourceURL,
+                    mediaItem: item,
                     settings: settings,
                     progressHandler: { [weak self] videoProgress in
                         guard let self else { return }

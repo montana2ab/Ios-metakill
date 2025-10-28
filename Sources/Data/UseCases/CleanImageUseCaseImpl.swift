@@ -13,31 +13,22 @@ public final class CleanImageUseCaseImpl: CleanImageUseCase {
     }
     
     public func execute(
-        imageURL: URL,
+        mediaItem: MediaItem,
         settings: CleaningSettings
     ) async throws -> CleaningResult {
         
         let startTime = Date()
         
-        // Create media item
-        let fileSize = try fileSize(at: imageURL)
-        let mediaItem = MediaItem(
-            name: imageURL.lastPathComponent,
-            type: .image,
-            sourceURL: imageURL,
-            fileSize: fileSize
-        )
-        
         do {
             // Clean the image
             let (cleanData, detectedMetadata) = try await cleaner.cleanImage(
-                from: imageURL,
+                from: mediaItem.sourceURL,
                 settings: settings
             )
             
             // Handle PNG text chunks if applicable
             let finalData: Data
-            if imageURL.pathExtension.lowercased() == "png" {
+            if mediaItem.sourceURL.pathExtension.lowercased() == "png" {
                 finalData = try cleaner.cleanPNGChunks(data: cleanData)
             } else {
                 finalData = cleanData
@@ -65,7 +56,7 @@ public final class CleanImageUseCaseImpl: CleanImageUseCase {
             
             // Preserve file date if requested
             if settings.preserveFileDate,
-               let modificationDate = try? FileManager.default.attributesOfItem(atPath: imageURL.path)[.modificationDate] as? Date {
+               let modificationDate = try? FileManager.default.attributesOfItem(atPath: mediaItem.sourceURL.path)[.modificationDate] as? Date {
                 try FileManager.default.setAttributes(
                     [.modificationDate: modificationDate],
                     ofItemAtPath: outputURL.path

@@ -300,12 +300,12 @@ final class BatchProcessorViewModel: ObservableObject {
                 switch item.type {
                 case .image:
                     result = try await imageUseCase.execute(
-                        imageURL: item.sourceURL,
+                        mediaItem: item,
                         settings: settings
                     )
                 case .video:
                     result = try await videoUseCase.execute(
-                        videoURL: item.sourceURL,
+                        mediaItem: item,
                         settings: settings
                     )
                 @unknown default:

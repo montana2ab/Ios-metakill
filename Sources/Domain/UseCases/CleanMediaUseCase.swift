@@ -22,7 +22,7 @@ public protocol CleanMediaUseCase {
 /// Use case for cleaning image metadata
 public protocol CleanImageUseCase {
     func execute(
-        imageURL: URL,
+        mediaItem: MediaItem,
         settings: CleaningSettings
     ) async throws -> CleaningResult
 }
@@ -30,12 +30,12 @@ public protocol CleanImageUseCase {
 /// Use case for cleaning video metadata
 public protocol CleanVideoUseCase {
     func execute(
-        videoURL: URL,
+        mediaItem: MediaItem,
         settings: CleaningSettings
     ) async throws -> CleaningResult
     
     func execute(
-        videoURL: URL,
+        mediaItem: MediaItem,
         settings: CleaningSettings,
         progressHandler: @escaping (Double) -> Void
     ) async throws -> CleaningResult

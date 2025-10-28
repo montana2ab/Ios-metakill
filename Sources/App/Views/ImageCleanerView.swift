@@ -356,7 +356,7 @@ final class ImageCleanerViewModel: ObservableObject {
 
             do {
                 let result = try await useCase.execute(
-                    imageURL: item.sourceURL,
+                    mediaItem: item,
                     settings: settings
                 )
 
