@@ -1,7 +1,7 @@
 # Performance Optimization Summary / Résumé des Optimisations de Performance
 
 ## Issue / Problème
-"Améliore le fluidé et les temps de chargement"
+"Améliore la fluidité et les temps de chargement"
 (Improve fluidity and loading times)
 
 ## Solution Overview / Vue d'ensemble de la solution
