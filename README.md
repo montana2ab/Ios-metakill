@@ -560,6 +560,14 @@ Contributions welcome! Please see our [Contributing Guide](CONTRIBUTING.md) ([Gu
 
 MIT License - See [LICENSE](LICENSE) file for details.
 
+Copyright (c) 2025 Anthony Jodar
+
+---
+
+## 👤 Author
+
+**Anthony Jodar**
+
 ---
 
 ## 🙏 Acknowledgments

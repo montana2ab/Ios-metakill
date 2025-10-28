@@ -2,6 +2,8 @@
 
 Merci de votre intérêt pour contribuer à MetadataKill ! Ce document fournit des directives et des informations pour les contributeurs.
 
+**Auteur du projet :** Anthony Jodar
+
 ## Table des matières
 
 - [Code de conduite](#code-de-conduite)
@@ -374,7 +376,11 @@ Mettez à jour le README lors :
 
 Les contributeurs seront :
 - Listés dans les notes de version
-- Reconnus dans CONTRIBUTORS.md
+- Reconnus dans [AUTHORS.md](AUTHORS.md)
 - Crédités pour les contributions significatives
+
+Toutes les contributions sont appréciées et aident à améliorer MetadataKill pour tout le monde.
+
+**Projet créé et maintenu par Anthony Jodar.**
 
 Merci de contribuer à MetadataKill ! 🙏

@@ -1,5 +1,10 @@
 // swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
+//
+// MetadataKill - iOS Metadata Cleaner
+// Author: Anthony Jodar
+// Copyright (c) 2025 Anthony Jodar
+// Licensed under the MIT License
 
 import PackageDescription
 
